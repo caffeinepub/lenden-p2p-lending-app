@@ -11,6 +11,7 @@ import {
   type Loan,
   type LoanRequest,
   MEMBERSHIP_MONTHLY_PRICE,
+  MEMBERSHIP_WEEKLY_PRICE,
   MEMBERSHIP_YEARLY_PRICE,
   PLATFORM_ENTRY_FEE,
   PLATFORM_EXIT_FEE,
@@ -226,7 +227,7 @@ interface AppState {
   addWithdrawal: (w: WithdrawalRecord) => void;
   purchaseMembership: (
     userId: string,
-    plan: "monthly" | "yearly",
+    plan: "weekly" | "monthly" | "yearly",
     utr: string,
   ) => void;
   computeCreditScore: (userId: string) => number;
@@ -344,13 +345,19 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const purchaseMembership = (
     userId: string,
-    plan: "monthly" | "yearly",
+    plan: "weekly" | "monthly" | "yearly",
     utr: string,
   ) => {
     const price =
-      plan === "monthly" ? MEMBERSHIP_MONTHLY_PRICE : MEMBERSHIP_YEARLY_PRICE;
+      plan === "weekly"
+        ? MEMBERSHIP_WEEKLY_PRICE
+        : plan === "monthly"
+          ? MEMBERSHIP_MONTHLY_PRICE
+          : MEMBERSHIP_YEARLY_PRICE;
     const expiryDate = new Date();
-    expiryDate.setDate(expiryDate.getDate() + (plan === "monthly" ? 30 : 365));
+    if (plan === "weekly") expiryDate.setDate(expiryDate.getDate() + 7);
+    else if (plan === "monthly") expiryDate.setDate(expiryDate.getDate() + 30);
+    else expiryDate.setDate(expiryDate.getDate() + 365);
 
     setUsers((prev) =>
       prev.map((u) =>
@@ -364,7 +371,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
       ),
     );
 
-    // Update currentUser if it's the same user
     setCurrentUser((prev) =>
       prev && prev.id === userId
         ? {
@@ -375,13 +381,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
         : prev,
     );
 
+    const planLabel =
+      plan === "weekly" ? "Weekly" : plan === "monthly" ? "Monthly" : "Yearly";
     const membershipFee: FeeRecord = {
       id: `fee_mem_${Date.now()}`,
       type: "membership",
       amount: price,
       userId,
       date: new Date().toISOString().split("T")[0],
-      description: `सदस्यता शुल्क / Membership Fee — ${plan === "monthly" ? "Monthly" : "Yearly"} | UTR: ${utr}`,
+      description: `सदस्यता शुल्क / Membership Fee — ${planLabel} | UTR: ${utr}`,
     };
     setFeeRecords((prev) => [...prev, membershipFee]);
   };

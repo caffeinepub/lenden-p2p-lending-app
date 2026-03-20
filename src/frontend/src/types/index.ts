@@ -85,6 +85,7 @@ export interface WithdrawalRecord {
 export const PLATFORM_ENTRY_FEE = 1; // ₹1 on registration
 export const PLATFORM_EXIT_FEE = 1; // ₹1 on loan closure
 export const PLATFORM_COMMISSION_RATE = 0.07; // 7% of loan principal
+export const MEMBERSHIP_WEEKLY_PRICE = 9; // ₹9/week
 export const MEMBERSHIP_MONTHLY_PRICE = 99; // ₹99/month
 export const MEMBERSHIP_YEARLY_PRICE = 499; // ₹499/year
 

@@ -18,6 +18,7 @@ import { toast } from "sonner";
 import { useApp } from "../store/appStore";
 import {
   MEMBERSHIP_MONTHLY_PRICE,
+  MEMBERSHIP_WEEKLY_PRICE,
   MEMBERSHIP_YEARLY_PRICE,
   formatCurrency,
 } from "../types";
@@ -61,9 +62,9 @@ const BENEFITS = [
 
 export function MembershipPage({ onNavigate }: MembershipPageProps) {
   const { currentUser, purchaseMembership } = useApp();
-  const [selectedPlan, setSelectedPlan] = useState<"monthly" | "yearly">(
-    "yearly",
-  );
+  const [selectedPlan, setSelectedPlan] = useState<
+    "weekly" | "monthly" | "yearly"
+  >("weekly");
   const [utr, setUtr] = useState("");
   const [showQr, setShowQr] = useState(false);
   const [isConfirming, setIsConfirming] = useState(false);
@@ -74,6 +75,13 @@ export function MembershipPage({ onNavigate }: MembershipPageProps) {
     currentUser.isPremium && currentUser.membershipExpiry
       ? new Date(currentUser.membershipExpiry) > new Date()
       : false;
+
+  const selectedPrice =
+    selectedPlan === "weekly"
+      ? MEMBERSHIP_WEEKLY_PRICE
+      : selectedPlan === "monthly"
+        ? MEMBERSHIP_MONTHLY_PRICE
+        : MEMBERSHIP_YEARLY_PRICE;
 
   const handleConfirmPayment = () => {
     if (!utr.trim()) {
@@ -88,6 +96,37 @@ export function MembershipPage({ onNavigate }: MembershipPageProps) {
       onNavigate("dashboard");
     }, 1000);
   };
+
+  const PLANS: {
+    key: "weekly" | "monthly" | "yearly";
+    label: string;
+    sublabel: string;
+    price: number;
+    badge?: string;
+    discountBadge?: string;
+  }[] = [
+    {
+      key: "weekly",
+      label: formatCurrency(MEMBERSHIP_WEEKLY_PRICE),
+      sublabel: "per week / प्रति सप्ताह",
+      price: MEMBERSHIP_WEEKLY_PRICE,
+      badge: "Starting at ₹9",
+    },
+    {
+      key: "monthly",
+      label: formatCurrency(MEMBERSHIP_MONTHLY_PRICE),
+      sublabel: "per month / प्रति माह",
+      price: MEMBERSHIP_MONTHLY_PRICE,
+    },
+    {
+      key: "yearly",
+      label: formatCurrency(MEMBERSHIP_YEARLY_PRICE),
+      sublabel: "per year / प्रति वर्ष",
+      price: MEMBERSHIP_YEARLY_PRICE,
+      badge: "Best Value",
+      discountBadge: "Save 58% vs Monthly",
+    },
+  ];
 
   return (
     <main className="max-w-3xl mx-auto px-4 py-8">
@@ -111,7 +150,7 @@ export function MembershipPage({ onNavigate }: MembershipPageProps) {
           <div>
             <h1 className="text-2xl font-bold">Premium Membership</h1>
             <p className="text-muted-foreground text-sm">
-              प्रीमियम सदस्यता — Unlock exclusive benefits
+              प्रीमियम सदस्यता — Starting at ₹9/week
             </p>
           </div>
         </div>
@@ -180,60 +219,51 @@ export function MembershipPage({ onNavigate }: MembershipPageProps) {
           className="mb-8"
         >
           <h2 className="text-lg font-bold mb-4">Choose Plan / प्लान चुनें</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {/* Monthly Plan */}
-            <button
-              type="button"
-              onClick={() => setSelectedPlan("monthly")}
-              data-ocid="membership.toggle"
-              className={`relative p-5 rounded-xl border-2 text-left transition-all ${
-                selectedPlan === "monthly"
-                  ? "border-primary bg-primary/5"
-                  : "border-border bg-card hover:border-primary/40"
-              }`}
-            >
-              <p className="font-bold text-lg">
-                {formatCurrency(MEMBERSHIP_MONTHLY_PRICE)}
-              </p>
-              <p className="text-sm text-muted-foreground">
-                per month / प्रति माह
-              </p>
-              <p className="text-xs text-muted-foreground mt-2">Monthly Plan</p>
-              {selectedPlan === "monthly" && (
-                <CheckCircle2 className="absolute top-3 right-3 w-5 h-5 text-primary" />
-              )}
-            </button>
-
-            {/* Yearly Plan */}
-            <button
-              type="button"
-              onClick={() => setSelectedPlan("yearly")}
-              data-ocid="membership.toggle"
-              className={`relative p-5 rounded-xl border-2 text-left transition-all ${
-                selectedPlan === "yearly"
-                  ? "border-primary bg-primary/5"
-                  : "border-border bg-card hover:border-primary/40"
-              }`}
-            >
-              <div className="absolute top-3 right-3">
-                <span className="text-xs bg-[oklch(0.94_0.05_158)] text-[oklch(0.38_0.09_158)] px-2 py-0.5 rounded-full font-semibold">
-                  Save 58%
-                </span>
-              </div>
-              <p className="font-bold text-lg">
-                {formatCurrency(MEMBERSHIP_YEARLY_PRICE)}
-              </p>
-              <p className="text-sm text-muted-foreground">
-                per year / प्रति वर्ष
-              </p>
-              <p className="text-xs text-[oklch(0.45_0.12_158)] mt-2 font-medium">
-                Best Value — Only{" "}
-                {formatCurrency(Math.round(MEMBERSHIP_YEARLY_PRICE / 12))}/mo
-              </p>
-              {selectedPlan === "yearly" && (
-                <CheckCircle2 className="absolute bottom-3 right-3 w-5 h-5 text-primary" />
-              )}
-            </button>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {PLANS.map((plan) => (
+              <button
+                key={plan.key}
+                type="button"
+                onClick={() => setSelectedPlan(plan.key)}
+                data-ocid="membership.toggle"
+                className={`relative p-5 rounded-xl border-2 text-left transition-all ${
+                  selectedPlan === plan.key
+                    ? "border-primary bg-primary/5"
+                    : "border-border bg-card hover:border-primary/40"
+                }`}
+              >
+                {plan.badge && (
+                  <div className="absolute top-3 right-3">
+                    <span
+                      className={`text-xs px-2 py-0.5 rounded-full font-semibold ${
+                        plan.key === "weekly"
+                          ? "bg-[oklch(0.94_0.06_85)] text-[oklch(0.45_0.16_70)]"
+                          : "bg-[oklch(0.94_0.05_158)] text-[oklch(0.38_0.09_158)]"
+                      }`}
+                    >
+                      {plan.badge}
+                    </span>
+                  </div>
+                )}
+                <p className="font-bold text-lg">{plan.label}</p>
+                <p className="text-sm text-muted-foreground mt-0.5">
+                  {plan.sublabel}
+                </p>
+                {plan.discountBadge && (
+                  <motion.span
+                    initial={{ scale: 0.85, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ delay: 0.3, type: "spring", stiffness: 300 }}
+                    className="inline-flex items-center gap-1 mt-2 text-xs px-2.5 py-1 rounded-full font-bold bg-[oklch(0.92_0.12_145)] text-[oklch(0.30_0.12_145)] border border-[oklch(0.75_0.12_145)]"
+                  >
+                    🏷️ {plan.discountBadge}
+                  </motion.span>
+                )}
+                {selectedPlan === plan.key && (
+                  <CheckCircle2 className="absolute bottom-3 right-3 w-5 h-5 text-primary" />
+                )}
+              </button>
+            ))}
           </div>
         </motion.section>
       )}
@@ -254,11 +284,7 @@ export function MembershipPage({ onNavigate }: MembershipPageProps) {
             <CardContent className="space-y-5">
               <div className="p-4 rounded-xl bg-secondary/60 space-y-2">
                 <p className="text-sm font-semibold">
-                  Step 1: Pay{" "}
-                  {selectedPlan === "monthly"
-                    ? formatCurrency(MEMBERSHIP_MONTHLY_PRICE)
-                    : formatCurrency(MEMBERSHIP_YEARLY_PRICE)}{" "}
-                  to Admin UPI
+                  Step 1: Pay {formatCurrency(selectedPrice)} to Admin UPI
                 </p>
                 <p className="text-sm text-muted-foreground">
                   UPI ID:{" "}
