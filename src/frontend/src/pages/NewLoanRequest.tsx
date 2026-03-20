@@ -23,7 +23,7 @@ export function NewLoanRequest({ onNavigate }: NewLoanRequestProps) {
   const [amount, setAmount] = useState("");
   const [purpose, setPurpose] = useState("");
   const [duration, setDuration] = useState("");
-  const [interestRate, setInterestRate] = useState("");
+  const [interestRate, setInterestRate] = useState("5");
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   // Payment gate state
@@ -194,12 +194,12 @@ export function NewLoanRequest({ onNavigate }: NewLoanRequestProps) {
                       )}
                     </div>
                     <div>
-                      <Label>Expected Interest Rate (%)</Label>
+                      <Label>Interest Rate (%) — Default 5%</Label>
                       <Input
                         type="number"
                         value={interestRate}
                         onChange={(e) => setInterestRate(e.target.value)}
-                        placeholder="e.g. 10"
+                        placeholder="5"
                         min={0}
                         max={36}
                         step={0.5}
@@ -312,7 +312,7 @@ export function NewLoanRequest({ onNavigate }: NewLoanRequestProps) {
                   {commission.toLocaleString("en-IN")}
                 </CardTitle>
                 <p className="text-sm text-muted-foreground">
-                  5% of \u20b9
+                  7% of \u20b9
                   {(pendingReq?.amount || 0).toLocaleString("en-IN")} loan
                   amount
                 </p>
