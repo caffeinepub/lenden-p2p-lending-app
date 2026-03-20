@@ -32,7 +32,7 @@ const BENEFITS = [
     icon: TrendingDown,
     title: "Higher Loan Limit",
     subtitle: "उच्च ऋण सीमा",
-    desc: "Up to ₹1,50,000 (vs ₹1,00,000 regular)",
+    desc: "Up to ₹75,00,000 (vs ₹50,00,000 regular)",
   },
   {
     icon: Zap,

@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { LogOut, Menu, Shield, X } from "lucide-react";
+import { LogOut, Megaphone, Menu, Phone, Shield, X } from "lucide-react";
 import { useState } from "react";
 import { useApp } from "../store/appStore";
 
@@ -18,6 +18,12 @@ export function Navbar({ currentPage, onNavigate }: NavbarProps) {
     { label: "Loan Requests", page: "loan-requests" },
     { label: "Repayment", page: "repayment" },
     { label: "Documents", page: "documents" },
+    { label: "Loan Offers 🎯", page: "loan-offers" },
+  ];
+
+  const publicLinks = [
+    { label: "Support", page: "support", icon: Phone },
+    { label: "Advertise", page: "advertise", icon: Megaphone },
   ];
 
   const handleLogout = () => {
@@ -43,9 +49,9 @@ export function Navbar({ currentPage, onNavigate }: NavbarProps) {
         </button>
 
         {/* Desktop Nav */}
-        {currentUser && (
-          <nav className="hidden md:flex items-center gap-1">
-            {navLinks.map((link) => (
+        <nav className="hidden md:flex items-center gap-1">
+          {currentUser &&
+            navLinks.map((link) => (
               <button
                 type="button"
                 key={link.page}
@@ -60,8 +66,23 @@ export function Navbar({ currentPage, onNavigate }: NavbarProps) {
                 {link.label}
               </button>
             ))}
-          </nav>
-        )}
+          {publicLinks.map((link) => (
+            <button
+              type="button"
+              key={link.page}
+              onClick={() => onNavigate(link.page)}
+              data-ocid="nav.link"
+              className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors flex items-center gap-1 ${
+                currentPage === link.page
+                  ? "bg-secondary text-primary"
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted"
+              }`}
+            >
+              <link.icon className="w-3.5 h-3.5" />
+              {link.label}
+            </button>
+          ))}
+        </nav>
 
         {/* Right Side */}
         <div className="flex items-center gap-2">
@@ -95,27 +116,43 @@ export function Navbar({ currentPage, onNavigate }: NavbarProps) {
           )}
 
           {/* Mobile Menu Toggle */}
-          {currentUser && (
-            <Button
-              variant="ghost"
-              size="sm"
-              className="md:hidden"
-              onClick={() => setMenuOpen(!menuOpen)}
-            >
-              {menuOpen ? (
-                <X className="w-5 h-5" />
-              ) : (
-                <Menu className="w-5 h-5" />
-              )}
-            </Button>
-          )}
+          <Button
+            variant="ghost"
+            size="sm"
+            className="md:hidden"
+            onClick={() => setMenuOpen(!menuOpen)}
+          >
+            {menuOpen ? (
+              <X className="w-5 h-5" />
+            ) : (
+              <Menu className="w-5 h-5" />
+            )}
+          </Button>
         </div>
       </div>
 
       {/* Mobile Menu */}
-      {menuOpen && currentUser && (
+      {menuOpen && (
         <div className="md:hidden border-t border-border bg-card px-4 py-2">
-          {navLinks.map((link) => (
+          {currentUser &&
+            navLinks.map((link) => (
+              <button
+                type="button"
+                key={link.page}
+                onClick={() => {
+                  onNavigate(link.page);
+                  setMenuOpen(false);
+                }}
+                className={`block w-full text-left px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                  currentPage === link.page
+                    ? "bg-secondary text-primary"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {link.label}
+              </button>
+            ))}
+          {publicLinks.map((link) => (
             <button
               type="button"
               key={link.page}
@@ -123,12 +160,13 @@ export function Navbar({ currentPage, onNavigate }: NavbarProps) {
                 onNavigate(link.page);
                 setMenuOpen(false);
               }}
-              className={`block w-full text-left px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+              className={`flex items-center gap-2 w-full text-left px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                 currentPage === link.page
                   ? "bg-secondary text-primary"
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
+              <link.icon className="w-3.5 h-3.5" />
               {link.label}
             </button>
           ))}

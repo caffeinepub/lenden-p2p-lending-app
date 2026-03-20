@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Footer } from "./components/Footer";
 import { Navbar } from "./components/Navbar";
 import { AdminWithdrawal } from "./pages/AdminWithdrawal";
+import { AdvertisePage } from "./pages/AdvertisePage";
 import { ApproveLoan } from "./pages/ApproveLoan";
 import { AuthPage } from "./pages/AuthPage";
 import { CreditScorePage } from "./pages/CreditScorePage";
@@ -10,10 +11,12 @@ import { Dashboard } from "./pages/Dashboard";
 import { LandingPage } from "./pages/LandingPage";
 import { LegalDocuments } from "./pages/LegalDocuments";
 import { LegalEscalation } from "./pages/LegalEscalation";
+import { LoanOffersPage } from "./pages/LoanOffersPage";
 import { MakeRepayment } from "./pages/MakeRepayment";
 import { MembershipPage } from "./pages/MembershipPage";
 import { NewLoanRequest } from "./pages/NewLoanRequest";
 import { PromissoryNote } from "./pages/PromissoryNote";
+import { SupportPage } from "./pages/SupportPage";
 import { AppProvider, useApp } from "./store/appStore";
 
 function AppContent() {
@@ -30,6 +33,10 @@ function AppContent() {
   if (page.startsWith("legal-")) loanId = page.replace("legal-", "");
 
   const renderPage = () => {
+    // Support and Advertise pages accessible without login
+    if (page === "support") return <SupportPage onNavigate={navigate} />;
+    if (page === "advertise") return <AdvertisePage onNavigate={navigate} />;
+
     if (!currentUser && page !== "landing" && page !== "auth") {
       return <LandingPage onNavigate={navigate} />;
     }
@@ -56,6 +63,8 @@ function AppContent() {
         return <AdminWithdrawal onNavigate={navigate} />;
       case page === "membership":
         return <MembershipPage onNavigate={navigate} />;
+      case page === "loan-offers":
+        return <LoanOffersPage onNavigate={navigate} />;
       case page === "credit-score":
         return <CreditScorePage onNavigate={navigate} />;
       case page.startsWith("promissory-"):
@@ -71,7 +80,7 @@ function AppContent() {
     <div className="min-h-screen flex flex-col">
       <Navbar currentPage={page} onNavigate={navigate} />
       <div className="flex-1">{renderPage()}</div>
-      <Footer />
+      <Footer onNavigate={navigate} />
       <Toaster richColors />
     </div>
   );

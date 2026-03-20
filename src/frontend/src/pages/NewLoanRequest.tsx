@@ -38,8 +38,8 @@ export function NewLoanRequest({ onNavigate }: NewLoanRequestProps) {
     const amt = Number.parseFloat(amount);
     if (!amount || Number.isNaN(amt) || amt <= 0)
       errs.amount = "Amount is required";
-    else if (amt > 100000)
-      errs.amount = "Maximum loan amount is \u20b91,00,000";
+    else if (amt < 1000 || amt > 5000000)
+      errs.amount = "Amount must be between \u20b91,000 and \u20b950,00,000";
     if (!purpose.trim()) errs.purpose = "Purpose is required";
     const dur = Number.parseInt(duration);
     if (!duration || Number.isNaN(dur) || dur < 1 || dur > 60)
@@ -73,8 +73,8 @@ export function NewLoanRequest({ onNavigate }: NewLoanRequestProps) {
   };
 
   const commission = pendingReq
-    ? Math.round(pendingReq.amount * 0.05)
-    : Math.round((Number.parseFloat(amount) || 0) * 0.05);
+    ? Math.round(pendingReq.amount * 0.07)
+    : Math.round((Number.parseFloat(amount) || 0) * 0.07);
 
   const handleCopyUPI = () => {
     navigator.clipboard.writeText(ADMIN_UPI).then(() => {
@@ -127,7 +127,7 @@ export function NewLoanRequest({ onNavigate }: NewLoanRequestProps) {
                   New Loan Request
                 </CardTitle>
                 <p className="text-sm text-muted-foreground">
-                  Maximum loan amount: \u20b91,00,000
+                  Loan limit: \u20b91,000 – \u20b950,00,000
                 </p>
               </CardHeader>
               <CardContent>
@@ -139,7 +139,8 @@ export function NewLoanRequest({ onNavigate }: NewLoanRequestProps) {
                       value={amount}
                       onChange={(e) => setAmount(e.target.value)}
                       placeholder="e.g. 50000"
-                      max={100000}
+                      min={1000}
+                      max={5000000}
                       data-ocid="newloan.input"
                     />
                     {errors.amount && (
@@ -250,10 +251,10 @@ export function NewLoanRequest({ onNavigate }: NewLoanRequestProps) {
                       {amt > 0 && (
                         <div className="pt-2 border-t border-border">
                           <p className="text-xs text-center text-muted-foreground">
-                            Platform commission (5%):{" "}
+                            Platform commission (7%):{" "}
                             <span className="font-bold text-foreground">
                               \u20b9
-                              {Math.round(amt * 0.05).toLocaleString("en-IN")}
+                              {Math.round(amt * 0.07).toLocaleString("en-IN")}
                             </span>{" "}
                             \u2014 paid via UPI in next step
                           </p>

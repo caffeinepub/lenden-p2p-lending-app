@@ -19,10 +19,12 @@ import {
   IndianRupee,
   Plus,
   Star,
+  Tag,
   TrendingUp,
   Wallet,
 } from "lucide-react";
 import { motion } from "motion/react";
+import { AdCarousel } from "../components/AdCarousel";
 import { useApp } from "../store/appStore";
 import {
   PLATFORM_COMMISSION_RATE,
@@ -148,6 +150,9 @@ export function Dashboard({ onNavigate }: DashboardProps) {
         </div>
       </motion.div>
 
+      {/* Ad Carousel — non-admin only */}
+      {!isAdmin && <AdCarousel onNavigate={onNavigate} />}
+
       {/* KPI Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {[
@@ -271,6 +276,16 @@ export function Dashboard({ onNavigate }: DashboardProps) {
             data-ocid="dashboard.secondary_button"
           >
             <Wallet className="w-4 h-4 mr-2" /> Withdraw Earnings
+          </Button>
+        )}
+        {!isAdmin && (
+          <Button
+            variant="outline"
+            onClick={() => onNavigate("loan-offers")}
+            className="border-amber-300 text-amber-700 hover:bg-amber-50"
+            data-ocid="dashboard.secondary_button"
+          >
+            <Tag className="w-4 h-4 mr-2" /> Loan Offers
           </Button>
         )}
       </div>
@@ -519,6 +534,12 @@ export function Dashboard({ onNavigate }: DashboardProps) {
                 value: formatCurrency(totalExitFees),
                 highlight: false,
               },
+              {
+                label: "Ad Revenue",
+                sub: "Advertisement fees",
+                value: "\u20b90",
+                highlight: false,
+              },
             ].map((item, i) => (
               <motion.div
                 key={item.label}
@@ -549,6 +570,17 @@ export function Dashboard({ onNavigate }: DashboardProps) {
                 </Card>
               </motion.div>
             ))}
+          </div>
+
+          <div className="text-xs text-muted-foreground bg-muted/50 border border-border rounded-lg px-3 py-2 mb-3">
+            <span className="font-semibold text-foreground">
+              Advertisement fees:
+            </span>{" "}
+            ₹499/week or ₹999/month per advertiser. Contact:{" "}
+            <span className="font-mono">barkat.6y@ptyes</span> |{" "}
+            <a href="tel:7814873372" className="underline">
+              7814873372
+            </a>
           </div>
 
           <Card className="border-border">
