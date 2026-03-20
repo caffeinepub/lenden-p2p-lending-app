@@ -10,7 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, CheckCircle, IndianRupee } from "lucide-react";
+import { ArrowLeft, CheckCircle, IndianRupee, QrCode } from "lucide-react";
 import { motion } from "motion/react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -23,6 +23,7 @@ import {
   computeTotalDue,
   formatCurrency,
 } from "../types";
+import { PaymentSuccess } from "./PaymentSuccess";
 
 interface MakeRepaymentProps {
   onNavigate: (page: string) => void;
@@ -42,6 +43,13 @@ export function MakeRepayment({ onNavigate }: MakeRepaymentProps) {
   const [amount, setAmount] = useState("");
   const [note, setNote] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [showQR, setShowQR] = useState(false);
+  const [successData, setSuccessData] = useState<{
+    amount: number;
+    loanId: string;
+    lenderName: string;
+    isLoanClosed: boolean;
+  } | null>(null);
 
   const borrowerLoans = loans.filter(
     (l) => l.borrowerId === currentUser?.id && l.status === "active",
@@ -93,7 +101,7 @@ export function MakeRepayment({ onNavigate }: MakeRepaymentProps) {
     };
     addRepayment(r);
 
-    // If this payment fully closes the loan → record exit fee + mark completed
+    let loanClosed = false;
     if (willComplete) {
       const exitFee: FeeRecord = {
         id: `fee_exit_${Date.now()}`,
@@ -106,17 +114,38 @@ export function MakeRepayment({ onNavigate }: MakeRepaymentProps) {
       };
       addFeeRecord(exitFee);
       updateLoan({ ...selectedLoan, status: "completed" });
+      loanClosed = true;
       toast.success(`Loan fully paid! Exit fee ₹${PLATFORM_EXIT_FEE} charged.`);
     } else {
       toast.success("Payment recorded successfully!");
     }
 
+    // Show success screen
+    setSuccessData({
+      amount: paymentAmt,
+      loanId: selectedLoanId,
+      lenderName,
+      isLoanClosed: loanClosed,
+    });
+
     setAmount("");
     setNote("");
     setSelectedLoanId("");
     setErrors({});
-    onNavigate("dashboard");
   };
+
+  // Show post-payment success screen
+  if (successData) {
+    return (
+      <PaymentSuccess
+        amount={successData.amount}
+        loanId={successData.loanId}
+        lenderName={successData.lenderName}
+        isLoanClosed={successData.isLoanClosed}
+        onNavigate={onNavigate}
+      />
+    );
+  }
 
   return (
     <main className="max-w-2xl mx-auto px-4 py-8">
@@ -132,7 +161,53 @@ export function MakeRepayment({ onNavigate }: MakeRepaymentProps) {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
+        className="space-y-6"
       >
+        {/* UPI Payment Info Card */}
+        <Card className="border-primary/30 bg-primary/5">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-primary/15 flex items-center justify-center">
+                  <QrCode className="w-5 h-5 text-primary" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold">Pay via UPI</p>
+                  <p className="text-xs text-muted-foreground">
+                    barkat.6y@ptyes
+                  </p>
+                </div>
+              </div>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => setShowQR(!showQR)}
+                className="text-xs"
+              >
+                {showQR ? "Hide QR" : "Show QR"}
+              </Button>
+            </div>
+
+            {showQR && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                className="mt-4 text-center"
+              >
+                <img
+                  src="/assets/uploads/IMG_20260321_020701-1.jpg"
+                  alt="UPI QR Code"
+                  className="w-52 h-52 object-contain mx-auto rounded-lg border border-border"
+                />
+                <p className="text-xs text-muted-foreground mt-2">
+                  Scan with Google Pay / PhonePe / Paytm
+                </p>
+              </motion.div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Repayment Form */}
         <Card className="border-border shadow-md">
           <CardHeader>
             <CardTitle className="text-xl flex items-center gap-2">
@@ -237,7 +312,6 @@ export function MakeRepayment({ onNavigate }: MakeRepaymentProps) {
                   )}
                 </div>
 
-                {/* Exit fee notice when payment will close the loan */}
                 {willComplete && (
                   <motion.div
                     initial={{ opacity: 0, y: -8 }}
@@ -255,10 +329,6 @@ export function MakeRepayment({ onNavigate }: MakeRepaymentProps) {
                       <p className="text-xs text-muted-foreground mt-0.5">
                         Exit Fee: <strong>₹{PLATFORM_EXIT_FEE}</strong> will be
                         charged to the platform.
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        Loan will be marked complete. Exit fee ₹
-                        {PLATFORM_EXIT_FEE} charged.
                       </p>
                     </div>
                   </motion.div>
