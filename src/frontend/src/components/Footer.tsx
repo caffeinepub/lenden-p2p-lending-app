@@ -9,7 +9,7 @@ export function Footer() {
         <div className="flex flex-col md:flex-row justify-between items-center gap-4">
           <div className="text-center md:text-left">
             <p className="text-sm text-[oklch(0.90_0_0)] font-semibold mb-1">
-              RinaDost — Trusted P2P Lending Platform
+              LenDen Mokoko — Trusted P2P Lending Platform
             </p>
             <p className="text-xs">Secure. Simple. Legally Protected.</p>
           </div>

@@ -71,9 +71,13 @@ export function Dashboard({ onNavigate }: DashboardProps) {
   } = useApp();
   if (!currentUser) return null;
 
-  const myLoans = loans.filter(
-    (l) => l.borrowerId === currentUser.id || l.lenderId === currentUser.id,
-  );
+  const isAdmin = currentUser.role === "admin";
+
+  const myLoans = isAdmin
+    ? loans
+    : loans.filter(
+        (l) => l.borrowerId === currentUser.id || l.lenderId === currentUser.id,
+      );
   const activeLoans = myLoans.filter((l) => l.status === "active");
   const totalAmount = activeLoans.reduce((sum, l) => sum + l.amount, 0);
   const totalRemaining = activeLoans.reduce((sum, l) => {
@@ -97,7 +101,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
   const getUserName = (id: string) =>
     users.find((u) => u.id === id)?.name ?? "Unknown";
 
-  // Recent fee records (last 5)
+  // Recent fee records (last 5) — only used for admin
   const recentFees = [...feeRecords]
     .sort((a, b) => b.date.localeCompare(a.date))
     .slice(0, 5);
@@ -112,7 +116,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
       >
         <h1 className="text-2xl font-bold">Loan Dashboard</h1>
         <p className="text-muted-foreground mt-1">
-          Welcome, {currentUser.name} 👋
+          Welcome, {currentUser.name} {isAdmin ? "👑" : "👋"}
         </p>
       </motion.div>
 
@@ -121,8 +125,8 @@ export function Dashboard({ onNavigate }: DashboardProps) {
         {[
           {
             icon: CreditCard,
-            label: "Active Loans",
-            sub: "Currently active",
+            label: isAdmin ? "Total Loans" : "Active Loans",
+            sub: isAdmin ? "All platform loans" : "Currently active",
             value: activeLoans.length.toString(),
             color: "text-primary",
           },
@@ -184,7 +188,9 @@ export function Dashboard({ onNavigate }: DashboardProps) {
             <Plus className="w-4 h-4 mr-2" /> Request a Loan
           </Button>
         )}
-        {(currentUser.role === "lender" || currentUser.role === "both") && (
+        {(currentUser.role === "lender" ||
+          currentUser.role === "both" ||
+          isAdmin) && (
           <Button
             variant="outline"
             onClick={() => onNavigate("loan-requests")}
@@ -193,18 +199,39 @@ export function Dashboard({ onNavigate }: DashboardProps) {
             Approve Loans
           </Button>
         )}
+        {!isAdmin && (
+          <Button
+            variant="outline"
+            onClick={() => onNavigate("repayment")}
+            data-ocid="dashboard.secondary_button"
+          >
+            Make a Payment
+          </Button>
+        )}
         <Button
           variant="outline"
-          onClick={() => onNavigate("repayment")}
+          onClick={() => onNavigate("legal-docs")}
           data-ocid="dashboard.secondary_button"
         >
-          Make a Payment
+          <FileText className="w-4 h-4 mr-2" /> Legal Documents
         </Button>
+        {isAdmin && (
+          <Button
+            variant="outline"
+            onClick={() => onNavigate("admin-withdrawal")}
+            className="border-primary/40 text-primary hover:bg-primary/5"
+            data-ocid="dashboard.secondary_button"
+          >
+            <Wallet className="w-4 h-4 mr-2" /> Withdraw Earnings
+          </Button>
+        )}
       </div>
 
       {/* Active Loans */}
       <section className="mb-8">
-        <h2 className="text-lg font-bold mb-4">Active Loans</h2>
+        <h2 className="text-lg font-bold mb-4">
+          {isAdmin ? "All Platform Loans" : "Active Loans"}
+        </h2>
         {activeLoans.length === 0 ? (
           <Card className="border-dashed" data-ocid="loans.empty_state">
             <CardContent className="py-12 text-center">
@@ -222,9 +249,9 @@ export function Dashboard({ onNavigate }: DashboardProps) {
               const progressPct = Math.min(100, (paid / totalDue) * 100);
               const legalCfg = LEGAL_STATUS_CONFIG[loan.legalStatus];
               const isBorrower = loan.borrowerId === currentUser.id;
-              const otherUser = getUserName(
-                isBorrower ? loan.lenderId : loan.borrowerId,
-              );
+              const otherUser = isAdmin
+                ? `${getUserName(loan.borrowerId)} ← ${getUserName(loan.lenderId)}`
+                : getUserName(isBorrower ? loan.lenderId : loan.borrowerId);
 
               return (
                 <motion.div
@@ -239,7 +266,11 @@ export function Dashboard({ onNavigate }: DashboardProps) {
                       <div className="flex items-start justify-between">
                         <div>
                           <p className="text-xs text-muted-foreground">
-                            {isBorrower ? "Lender" : "Borrower"}
+                            {isAdmin
+                              ? "Borrower ← Lender"
+                              : isBorrower
+                                ? "Lender"
+                                : "Borrower"}
                           </p>
                           <CardTitle className="text-base">
                             {otherUser}
@@ -263,7 +294,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
                           </span>
                         </div>
                         {/* Net amount to borrower */}
-                        {isBorrower && (
+                        {isBorrower && !isAdmin && (
                           <div className="flex justify-between text-xs">
                             <span className="text-muted-foreground">
                               You received (after commission)
@@ -324,7 +355,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
                           >
                             <FileText className="w-3 h-3 mr-1" /> View Note
                           </Button>
-                          {!isBorrower && (
+                          {(!isBorrower || isAdmin) && (
                             <Button
                               size="sm"
                               variant="outline"
@@ -346,181 +377,196 @@ export function Dashboard({ onNavigate }: DashboardProps) {
         )}
       </section>
 
-      {/* Transaction History */}
-      <section className="mb-8">
-        <h2 className="text-lg font-bold mb-4">Transaction History</h2>
-        <Card className="border-border">
-          <CardContent className="p-0">
-            <Table data-ocid="transactions.table">
-              <TableHeader>
-                <TableRow className="bg-secondary/50">
-                  <TableHead>Date</TableHead>
-                  <TableHead>Description</TableHead>
-                  <TableHead>Amount</TableHead>
-                  <TableHead>Status</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {myRepayments.length === 0 ? (
-                  <TableRow>
-                    <TableCell
-                      colSpan={4}
-                      className="text-center text-muted-foreground py-8"
-                      data-ocid="transactions.empty_state"
-                    >
-                      No transactions yet
-                    </TableCell>
+      {/* Transaction History — hidden for admin */}
+      {!isAdmin && (
+        <section className="mb-8">
+          <h2 className="text-lg font-bold mb-4">Transaction History</h2>
+          <Card className="border-border">
+            <CardContent className="p-0">
+              <Table data-ocid="transactions.table">
+                <TableHeader>
+                  <TableRow className="bg-secondary/50">
+                    <TableHead>Date</TableHead>
+                    <TableHead>Description</TableHead>
+                    <TableHead>Amount</TableHead>
+                    <TableHead>Status</TableHead>
                   </TableRow>
-                ) : (
-                  myRepayments.map((r, idx) => (
-                    <TableRow
-                      key={r.id}
-                      data-ocid={`transactions.row.${idx + 1}`}
-                    >
-                      <TableCell className="text-sm">{r.date}</TableCell>
-                      <TableCell className="text-sm">{r.note}</TableCell>
-                      <TableCell className="text-sm font-semibold text-primary">
-                        {formatCurrency(r.amount)}
-                      </TableCell>
-                      <TableCell>
-                        <Badge className="bg-[oklch(0.94_0.05_158)] text-[oklch(0.38_0.09_158)] border-0">
-                          Paid
-                        </Badge>
+                </TableHeader>
+                <TableBody>
+                  {myRepayments.length === 0 ? (
+                    <TableRow>
+                      <TableCell
+                        colSpan={4}
+                        className="text-center text-muted-foreground py-8"
+                        data-ocid="transactions.empty_state"
+                      >
+                        No transactions yet
                       </TableCell>
                     </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
-      </section>
+                  ) : (
+                    myRepayments.map((r, idx) => (
+                      <TableRow
+                        key={r.id}
+                        data-ocid={`transactions.row.${idx + 1}`}
+                      >
+                        <TableCell className="text-sm">{r.date}</TableCell>
+                        <TableCell className="text-sm">{r.note}</TableCell>
+                        <TableCell className="text-sm font-semibold text-primary">
+                          {formatCurrency(r.amount)}
+                        </TableCell>
+                        <TableCell>
+                          <Badge className="bg-[oklch(0.94_0.05_158)] text-[oklch(0.38_0.09_158)] border-0">
+                            Paid
+                          </Badge>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </section>
+      )}
 
-      {/* Admin Earnings Section */}
-      <section className="mb-8">
-        <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
-          <Wallet className="w-5 h-5 text-primary" />
-          Admin Earnings
-        </h2>
-
-        {/* Summary KPI row */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
-          {[
-            {
-              label: "Total Earnings",
-              sub: "All revenue",
-              value: formatCurrency(totalAdminEarnings),
-              highlight: true,
-            },
-            {
-              label: `Commission (${(PLATFORM_COMMISSION_RATE * 100).toFixed(0)}%)`,
-              sub: "Commissions",
-              value: formatCurrency(totalCommission),
-              highlight: false,
-            },
-            {
-              label: `Entry Fees (₹${PLATFORM_ENTRY_FEE})`,
-              sub: "Entry Fees",
-              value: formatCurrency(totalEntryFees),
-              highlight: false,
-            },
-            {
-              label: `Exit Fees (₹${PLATFORM_EXIT_FEE})`,
-              sub: "Exit Fees",
-              value: formatCurrency(totalExitFees),
-              highlight: false,
-            },
-          ].map((item, i) => (
-            <motion.div
-              key={item.label}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 + i * 0.06 }}
+      {/* Admin Earnings Section — ONLY for admin */}
+      {isAdmin && (
+        <section className="mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-bold flex items-center gap-2">
+              <Wallet className="w-5 h-5 text-primary" />
+              Admin Earnings
+            </h2>
+            <Button
+              onClick={() => onNavigate("admin-withdrawal")}
+              size="sm"
+              data-ocid="admin.primary_button"
             >
-              <Card
-                className={`border ${
-                  item.highlight
-                    ? "border-primary/40 bg-primary/5"
-                    : "border-border"
-                }`}
-              >
-                <CardContent className="p-4">
-                  <p className="text-xs text-muted-foreground">{item.label}</p>
-                  <p className="text-xs text-muted-foreground">{item.sub}</p>
-                  <p
-                    className={`text-lg font-bold mt-1 ${
-                      item.highlight ? "text-primary" : "text-foreground"
-                    }`}
-                  >
-                    {item.value}
-                  </p>
-                </CardContent>
-              </Card>
-            </motion.div>
-          ))}
-        </div>
+              Withdraw Earnings
+            </Button>
+          </div>
 
-        {/* Recent fee log */}
-        <Card className="border-border">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm">Recent Fee Transactions</CardTitle>
-          </CardHeader>
-          <CardContent className="p-0">
-            <Table data-ocid="fees.table">
-              <TableHeader>
-                <TableRow className="bg-secondary/50">
-                  <TableHead className="text-xs">Date</TableHead>
-                  <TableHead className="text-xs">Description</TableHead>
-                  <TableHead className="text-xs">Type</TableHead>
-                  <TableHead className="text-xs">Amount</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {recentFees.length === 0 ? (
-                  <TableRow>
-                    <TableCell
-                      colSpan={4}
-                      className="text-center py-6 text-muted-foreground text-sm"
-                      data-ocid="fees.empty_state"
+          {/* Summary KPI row */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+            {[
+              {
+                label: "Total Earnings",
+                sub: "All revenue",
+                value: formatCurrency(totalAdminEarnings),
+                highlight: true,
+              },
+              {
+                label: `Commission (${(PLATFORM_COMMISSION_RATE * 100).toFixed(0)}%)`,
+                sub: "Commissions",
+                value: formatCurrency(totalCommission),
+                highlight: false,
+              },
+              {
+                label: `Entry Fees (\u20b9${PLATFORM_ENTRY_FEE})`,
+                sub: "Entry Fees",
+                value: formatCurrency(totalEntryFees),
+                highlight: false,
+              },
+              {
+                label: `Exit Fees (\u20b9${PLATFORM_EXIT_FEE})`,
+                sub: "Exit Fees",
+                value: formatCurrency(totalExitFees),
+                highlight: false,
+              },
+            ].map((item, i) => (
+              <motion.div
+                key={item.label}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 + i * 0.06 }}
+              >
+                <Card
+                  className={`border ${
+                    item.highlight
+                      ? "border-primary/40 bg-primary/5"
+                      : "border-border"
+                  }`}
+                >
+                  <CardContent className="p-4">
+                    <p className="text-xs text-muted-foreground">
+                      {item.label}
+                    </p>
+                    <p className="text-xs text-muted-foreground">{item.sub}</p>
+                    <p
+                      className={`text-lg font-bold mt-1 ${
+                        item.highlight ? "text-primary" : "text-foreground"
+                      }`}
                     >
-                      No fee transactions yet
-                    </TableCell>
+                      {item.value}
+                    </p>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Recent fee log */}
+          <Card className="border-border">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm">Recent Fee Transactions</CardTitle>
+            </CardHeader>
+            <CardContent className="p-0">
+              <Table data-ocid="fees.table">
+                <TableHeader>
+                  <TableRow className="bg-secondary/50">
+                    <TableHead className="text-xs">Date</TableHead>
+                    <TableHead className="text-xs">Description</TableHead>
+                    <TableHead className="text-xs">Type</TableHead>
+                    <TableHead className="text-xs">Amount</TableHead>
                   </TableRow>
-                ) : (
-                  recentFees.map((fee, idx) => (
-                    <TableRow key={fee.id} data-ocid={`fees.row.${idx + 1}`}>
-                      <TableCell className="text-xs">{fee.date}</TableCell>
-                      <TableCell className="text-xs">
-                        {fee.description}
-                      </TableCell>
-                      <TableCell>
-                        <span
-                          className={`text-xs px-2 py-0.5 rounded-full font-medium ${
-                            fee.type === "commission"
-                              ? "bg-[oklch(0.96_0.06_50)] text-[oklch(0.50_0.14_50)]"
-                              : fee.type === "entry"
-                                ? "bg-[oklch(0.94_0.05_158)] text-[oklch(0.38_0.09_158)]"
-                                : "bg-[oklch(0.96_0.06_85)] text-[oklch(0.55_0.14_85)]"
-                          }`}
-                        >
-                          {fee.type === "commission"
-                            ? "Commission"
-                            : fee.type === "entry"
-                              ? "Entry"
-                              : "Exit"}
-                        </span>
-                      </TableCell>
-                      <TableCell className="text-xs font-bold text-primary">
-                        {formatCurrency(fee.amount)}
+                </TableHeader>
+                <TableBody>
+                  {recentFees.length === 0 ? (
+                    <TableRow>
+                      <TableCell
+                        colSpan={4}
+                        className="text-center py-6 text-muted-foreground text-sm"
+                        data-ocid="fees.empty_state"
+                      >
+                        No fee transactions yet
                       </TableCell>
                     </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
-      </section>
+                  ) : (
+                    recentFees.map((fee, idx) => (
+                      <TableRow key={fee.id} data-ocid={`fees.row.${idx + 1}`}>
+                        <TableCell className="text-xs">{fee.date}</TableCell>
+                        <TableCell className="text-xs">
+                          {fee.description}
+                        </TableCell>
+                        <TableCell>
+                          <span
+                            className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                              fee.type === "commission"
+                                ? "bg-[oklch(0.96_0.06_50)] text-[oklch(0.50_0.14_50)]"
+                                : fee.type === "entry"
+                                  ? "bg-[oklch(0.94_0.05_158)] text-[oklch(0.38_0.09_158)]"
+                                  : "bg-[oklch(0.96_0.06_85)] text-[oklch(0.55_0.14_85)]"
+                            }`}
+                          >
+                            {fee.type === "commission"
+                              ? "Commission"
+                              : fee.type === "entry"
+                                ? "Entry"
+                                : "Exit"}
+                          </span>
+                        </TableCell>
+                        <TableCell className="text-xs font-bold text-primary">
+                          {formatCurrency(fee.amount)}
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </section>
+      )}
 
       {/* Bottom Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -539,7 +585,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
               </p>
             ) : (
               <div className="space-y-2">
-                {activeLoans.map((loan) => (
+                {activeLoans.slice(0, 3).map((loan) => (
                   <button
                     type="button"
                     key={loan.id}
@@ -559,6 +605,15 @@ export function Dashboard({ onNavigate }: DashboardProps) {
                     </div>
                   </button>
                 ))}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full mt-2"
+                  onClick={() => onNavigate("legal-docs")}
+                  data-ocid="documents.link"
+                >
+                  View All Legal Documents
+                </Button>
               </div>
             )}
           </CardContent>
@@ -588,9 +643,11 @@ export function Dashboard({ onNavigate }: DashboardProps) {
                       <div>
                         <p className="text-sm font-medium">
                           {formatCurrency(loan.amount)} —{" "}
-                          {getUserName(
-                            isBorrower ? loan.lenderId : loan.borrowerId,
-                          )}
+                          {isAdmin
+                            ? getUserName(loan.borrowerId)
+                            : getUserName(
+                                isBorrower ? loan.lenderId : loan.borrowerId,
+                              )}
                         </p>
                         <span
                           className={`text-xs px-2 py-0.5 rounded-full border font-medium ${cfg.color}`}
@@ -598,7 +655,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
                           {cfg.label}
                         </span>
                       </div>
-                      {!isBorrower && (
+                      {(!isBorrower || isAdmin) && (
                         <Button
                           size="sm"
                           variant="outline"

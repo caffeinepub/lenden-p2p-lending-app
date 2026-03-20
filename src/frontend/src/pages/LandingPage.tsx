@@ -121,7 +121,7 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
             className="text-center mb-12"
           >
             <h2 className="text-3xl font-bold mb-2">Our Key Features</h2>
-            <p className="text-muted-foreground">Why choose RinaDost?</p>
+            <p className="text-muted-foreground">Why choose LenDen Mokoko?</p>
           </motion.div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {features.map((f, i) => (

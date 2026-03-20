@@ -2,10 +2,12 @@ import { Toaster } from "@/components/ui/sonner";
 import { useState } from "react";
 import { Footer } from "./components/Footer";
 import { Navbar } from "./components/Navbar";
+import { AdminWithdrawal } from "./pages/AdminWithdrawal";
 import { ApproveLoan } from "./pages/ApproveLoan";
 import { AuthPage } from "./pages/AuthPage";
 import { Dashboard } from "./pages/Dashboard";
 import { LandingPage } from "./pages/LandingPage";
+import { LegalDocuments } from "./pages/LegalDocuments";
 import { LegalEscalation } from "./pages/LegalEscalation";
 import { MakeRepayment } from "./pages/MakeRepayment";
 import { NewLoanRequest } from "./pages/NewLoanRequest";
@@ -47,6 +49,10 @@ function AppContent() {
         return <MakeRepayment onNavigate={navigate} />;
       case page === "documents":
         return <Dashboard onNavigate={navigate} />;
+      case page === "legal-docs":
+        return <LegalDocuments onNavigate={navigate} />;
+      case page === "admin-withdrawal":
+        return <AdminWithdrawal onNavigate={navigate} />;
       case page.startsWith("promissory-"):
         return <PromissoryNote loanId={loanId} onNavigate={navigate} />;
       case page.startsWith("legal-"):

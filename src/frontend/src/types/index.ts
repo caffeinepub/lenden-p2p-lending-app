@@ -1,4 +1,4 @@
-export type UserRole = "lender" | "borrower" | "both";
+export type UserRole = "lender" | "borrower" | "both" | "admin";
 
 export interface User {
   id: string;
@@ -26,7 +26,7 @@ export interface Loan {
   startDate: string;
   legalStatus: LegalStatus;
   promissoryNote?: string;
-  /** 5% of principal charged as platform commission */
+  /** 7% of principal charged as platform commission */
   commissionAmount: number;
   /** amount borrower actually receives = amount - commissionAmount */
   netAmountToBorrower: number;
@@ -48,9 +48,11 @@ export interface LoanRequest {
   durationMonths: number;
   requestedInterestRate: number;
   createdAt: string;
+  /** UTR / Transaction Reference Number for commission payment */
+  utr?: string;
 }
 
-export type FeeType = "entry" | "exit" | "commission";
+export type FeeType = "entry" | "exit" | "commission" | "withdrawal";
 
 export interface FeeRecord {
   id: string;
@@ -62,10 +64,22 @@ export interface FeeRecord {
   description: string;
 }
 
-// ─── Platform Fee Constants ───────────────────────────────────────────────────
+export interface WithdrawalRecord {
+  id: string;
+  amount: number;
+  upiId: string;
+  date: string;
+  status: "pending" | "completed";
+  note: string;
+}
+
+// ─── Platform Fee Constants ──────────────────────────────────────────────────────
 export const PLATFORM_ENTRY_FEE = 1; // ₹1 on registration
 export const PLATFORM_EXIT_FEE = 1; // ₹1 on loan closure
-export const PLATFORM_COMMISSION_RATE = 0.05; // 5% of loan principal
+export const PLATFORM_COMMISSION_RATE = 0.07; // 7% of loan principal
+
+// Admin phone number - only this number gets admin access
+export const ADMIN_PHONE = "barkat6y"; // Admin can login with this phone
 
 export function computeCommission(amount: number): number {
   return Math.round(amount * PLATFORM_COMMISSION_RATE);

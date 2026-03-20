@@ -14,11 +14,13 @@ import {
   PLATFORM_EXIT_FEE,
   type Repayment,
   type User,
+  type WithdrawalRecord,
   computeCommission,
   computeNetAmount,
 } from "../types";
 
 const SEED_USERS: User[] = [
+  { id: "admin1", name: "Barkat (Admin)", phone: "0000000000", role: "admin" },
   { id: "u1", name: "Ramesh Kumar", phone: "9876543210", role: "lender" },
   { id: "u2", name: "Suresh Sharma", phone: "9876543211", role: "borrower" },
   { id: "u3", name: "Priya Gupta", phone: "9876543212", role: "both" },
@@ -36,10 +38,10 @@ const SEED_LOANS: Loan[] = [
     status: "active",
     startDate: "2025-10-01",
     legalStatus: "normal",
-    commissionAmount: 2500,
-    netAmountToBorrower: 47500,
+    commissionAmount: 3500,
+    netAmountToBorrower: 46500,
     promissoryNote:
-      "यह प्रॉमिसरी नोट दिनांक 1 अक्टूबर 2025 को ₹50,000 की राशि के लिए बनाया गया है।\nउधारकर्ता: सुरेश शर्मा, ऋणदाता: रमेश कुमार।\nब्याज दर: 12% प्रति वर्ष।\nप्लेटफ़ॉर्म कमीशन (5%): ₹2,500 | उधारकर्ता को प्राप्त राशि: ₹47,500",
+      "यह प्रॉमिसरी नोट दिनांक 1 अक्टूबर 2025 को ₹50,000 की राशि के लिए बनाया गया है।\nउधारकर्ता: सुरेश शर्मा, ऋणदाता: रमेश कुमार।\nब्याज दर: 12% प्रति वर्ष।\nप्लेटफ़ॉर्म कमीशन (7%): ₹3,500 | उधारकर्ता को प्राप्त राशि: ₹46,500",
   },
   {
     id: "l2",
@@ -52,10 +54,10 @@ const SEED_LOANS: Loan[] = [
     status: "active",
     startDate: "2025-11-15",
     legalStatus: "warning",
-    commissionAmount: 1500,
-    netAmountToBorrower: 28500,
+    commissionAmount: 2100,
+    netAmountToBorrower: 27900,
     promissoryNote:
-      "यह प्रॉमिसरी नोट दिनांक 15 नवंबर 2025 को ₹30,000 की राशि के लिए बनाया गया है।\nउधारकर्ता: प्रिया गुप्ता, ऋणदाता: रमेश कुमार।\nब्याज दर: 10% प्रति वर्ष।\nप्लेटफ़ॉर्म कमीशन (5%): ₹1,500 | उधारकर्ता को प्राप्त राशि: ₹28,500",
+      "यह प्रॉमिसरी नोट दिनांक 15 नवंबर 2025 को ₹30,000 की राशि के लिए बनाया गया है।\nउधारकर्ता: प्रिया गुप्ता, ऋणदाता: रमेश कुमार।\nब्याज दर: 10% प्रति वर्ष।\nप्लेटफ़ॉर्म कमीशन (7%): ₹2,100 | उधारकर्ता को प्राप्त राशि: ₹27,900",
   },
   {
     id: "l3",
@@ -68,10 +70,10 @@ const SEED_LOANS: Loan[] = [
     status: "active",
     startDate: "2025-12-01",
     legalStatus: "normal",
-    commissionAmount: 1000,
-    netAmountToBorrower: 19000,
+    commissionAmount: 1400,
+    netAmountToBorrower: 18600,
     promissoryNote:
-      "यह प्रॉमिसरी नोट दिनांक 1 दिसंबर 2025 को ₹20,000 की राशि के लिए बनाया गया है।\nउधारकर्ता: सुरेश शर्मा, ऋणदाता: प्रिया गुप्ता।\nब्याज दर: 8% प्रति वर्ष।\nप्लेटफ़ॉर्म कमीशन (5%): ₹1,000 | उधारकर्ता को प्राप्त राशि: ₹19,000",
+      "यह प्रॉमिसरी नोट दिनांक 1 दिसंबर 2025 को ₹20,000 की राशि के लिए बनाया गया है।\nउधारकर्ता: सुरेश शर्मा, ऋणदाता: प्रिया गुप्ता।\nब्याज दर: 8% प्रति वर्ष।\nप्लेटफ़ॉर्म कमीशन (7%): ₹1,400 | उधारकर्ता को प्राप्त राशि: ₹18,600",
   },
 ];
 
@@ -140,29 +142,29 @@ const SEED_FEE_RECORDS: FeeRecord[] = [
   {
     id: "f4",
     type: "commission",
-    amount: 2500,
+    amount: 3500,
     userId: "u2",
     loanId: "l1",
     date: "2025-10-01",
-    description: "कमीशन 5% / Commission 5% — ₹50,000 loan",
+    description: "कमीशन 7% / Commission 7% — ₹50,000 loan",
   },
   {
     id: "f5",
     type: "commission",
-    amount: 1500,
+    amount: 2100,
     userId: "u3",
     loanId: "l2",
     date: "2025-11-15",
-    description: "कमीशन 5% / Commission 5% — ₹30,000 loan",
+    description: "कमीशन 7% / Commission 7% — ₹30,000 loan",
   },
   {
     id: "f6",
     type: "commission",
-    amount: 1000,
+    amount: 1400,
     userId: "u2",
     loanId: "l3",
     date: "2025-12-01",
-    description: "कमीशन 5% / Commission 5% — ₹20,000 loan",
+    description: "कमीशन 7% / Commission 7% — ₹20,000 loan",
   },
 ];
 
@@ -182,15 +184,17 @@ interface AppState {
   repayments: Repayment[];
   loanRequests: LoanRequest[];
   feeRecords: FeeRecord[];
+  withdrawals: WithdrawalRecord[];
   login: (user: User) => void;
   logout: () => void;
-  register: (user: Omit<User, "id">) => User;
+  register: (user: Omit<User, "id">, utr?: string) => User;
   addLoan: (loan: Loan) => void;
   updateLoan: (loan: Loan) => void;
   addRepayment: (repayment: Repayment) => void;
   addLoanRequest: (req: LoanRequest) => void;
   removeLoanRequest: (id: string) => void;
   addFeeRecord: (record: FeeRecord) => void;
+  addWithdrawal: (w: WithdrawalRecord) => void;
   // computed admin stats
   totalCommission: number;
   totalEntryFees: number;
@@ -219,6 +223,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [feeRecords, setFeeRecords] = useState<FeeRecord[]>(() =>
     loadFromStorage("feeRecords", SEED_FEE_RECORDS),
   );
+  const [withdrawals, setWithdrawals] = useState<WithdrawalRecord[]>(() =>
+    loadFromStorage("withdrawals", []),
+  );
 
   useEffect(() => {
     localStorage.setItem("currentUser", JSON.stringify(currentUser));
@@ -238,21 +245,25 @@ export function AppProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     localStorage.setItem("feeRecords", JSON.stringify(feeRecords));
   }, [feeRecords]);
+  useEffect(() => {
+    localStorage.setItem("withdrawals", JSON.stringify(withdrawals));
+  }, [withdrawals]);
 
   const login = (user: User) => setCurrentUser(user);
   const logout = () => setCurrentUser(null);
 
-  const register = (data: Omit<User, "id">) => {
+  const register = (data: Omit<User, "id">, utr?: string) => {
     const user: User = { ...data, id: `u${Date.now()}` };
     setUsers((prev) => [...prev, user]);
-    // Record ₹1 entry fee
+    // Record ₹1 entry fee with optional UTR
+    const utrNote = utr ? ` | UTR: ${utr}` : "";
     const entryFee: FeeRecord = {
       id: `fee_entry_${Date.now()}`,
       type: "entry",
       amount: PLATFORM_ENTRY_FEE,
       userId: user.id,
       date: new Date().toISOString().split("T")[0],
-      description: `प्रवेश शुल्क / Entry Fee — ${user.name}`,
+      description: `प्रवेश शुल्क / Entry Fee — ${user.name}${utrNote}`,
     };
     setFeeRecords((prev) => [...prev, entryFee]);
     return user;
@@ -260,7 +271,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const addLoan = (loan: Loan) => {
     setLoans((prev) => [...prev, loan]);
-    // Record 5% commission
+    // Record 7% commission
     const commission: FeeRecord = {
       id: `fee_comm_${Date.now()}`,
       type: "commission",
@@ -268,7 +279,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       userId: loan.borrowerId,
       loanId: loan.id,
       date: new Date().toISOString().split("T")[0],
-      description: `कमीशन 5% / Commission 5% — ₹${loan.amount.toLocaleString("en-IN")} loan`,
+      description: `कमीशन 7% / Commission 7% — ₹${loan.amount.toLocaleString("en-IN")} loan`,
     };
     setFeeRecords((prev) => [...prev, commission]);
   };
@@ -280,10 +291,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setRepayments((prev) => [...prev, r]);
   };
 
-  /**
-   * Call this when a loan is fully repaid to record the ₹1 exit fee.
-   * Triggered externally (MakeRepayment page) after confirming completion.
-   */
   const addFeeRecord = (record: FeeRecord) =>
     setFeeRecords((prev) => [...prev, record]);
 
@@ -291,6 +298,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setLoanRequests((prev) => [...prev, req]);
   const removeLoanRequest = (id: string) =>
     setLoanRequests((prev) => prev.filter((r) => r.id !== id));
+
+  const addWithdrawal = (w: WithdrawalRecord) =>
+    setWithdrawals((prev) => [...prev, w]);
 
   // Computed admin totals
   const totalCommission = feeRecords
@@ -311,6 +321,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     repayments,
     loanRequests,
     feeRecords,
+    withdrawals,
     login,
     logout,
     register,
@@ -320,6 +331,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     addLoanRequest,
     removeLoanRequest,
     addFeeRecord,
+    addWithdrawal,
     totalCommission,
     totalEntryFees,
     totalExitFees,

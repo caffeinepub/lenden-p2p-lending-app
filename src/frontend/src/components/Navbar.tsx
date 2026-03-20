@@ -36,7 +36,7 @@ export function Navbar({ currentPage, onNavigate }: NavbarProps) {
           data-ocid="nav.link"
         >
           <Shield className="w-7 h-7" />
-          <span>RinaDost</span>
+          <span>LenDen Mokoko</span>
           <span className="text-sm font-normal text-muted-foreground hidden sm:block">
             P2P Lending
           </span>
