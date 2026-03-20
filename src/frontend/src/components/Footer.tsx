@@ -8,10 +8,10 @@ export function Footer() {
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="flex flex-col md:flex-row justify-between items-center gap-4">
           <div className="text-center md:text-left">
-            <p className="text-sm font-devanagari text-[oklch(0.90_0_0)] font-semibold mb-1">
-              रिनादोस्त — विश्वसनीय P2P ऋण मंच
+            <p className="text-sm text-[oklch(0.90_0_0)] font-semibold mb-1">
+              RinaDost — Trusted P2P Lending Platform
             </p>
-            <p className="text-xs">RinaDost — Trusted P2P Lending Platform</p>
+            <p className="text-xs">Secure. Simple. Legally Protected.</p>
           </div>
           <div className="flex gap-4 text-xs">
             <a href="/privacy" className="hover:text-white transition-colors">

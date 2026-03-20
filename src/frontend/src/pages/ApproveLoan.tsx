@@ -35,9 +35,7 @@ export function ApproveLoan({ onNavigate }: ApproveLoanProps) {
     const rateStr = rates[reqId] ?? req.requestedInterestRate.toString();
     const rate = Number.parseFloat(rateStr);
     if (Number.isNaN(rate) || rate < 0 || rate > 36) {
-      toast.error(
-        "कृपया मान्य ब्याज दर दर्ज करें (0-36%) / Enter valid interest rate",
-      );
+      toast.error("Please enter a valid interest rate (0-36%)");
       return;
     }
 
@@ -46,22 +44,22 @@ export function ApproveLoan({ onNavigate }: ApproveLoanProps) {
     const netAmount = computeNetAmount(req.amount);
 
     const note = [
-      `यह प्रॉमिसरी नोट दिनांक ${new Date().toLocaleDateString("hi-IN")} को बनाया गया है।`,
-      `उधारकर्ता: ${borrower?.name ?? "Unknown"}`,
-      `ऋणदाता: ${currentUser.name}`,
+      `This Promissory Note is created on ${new Date().toLocaleDateString("en-IN")}.`,
+      `Borrower: ${borrower?.name ?? "Unknown"}`,
+      `Lender: ${currentUser.name}`,
       "",
-      "── ऋण विवरण / Loan Details ──",
-      `मूल राशि / Principal: ₹${req.amount.toLocaleString("en-IN")}`,
-      `ब्याज दर / Interest Rate: ${rate}% प्रति वर्ष`,
-      `अवधि / Duration: ${req.durationMonths} महीने`,
+      "── Loan Details ──",
+      `Principal: ₹${req.amount.toLocaleString("en-IN")}`,
+      `Interest Rate: ${rate}% per annum`,
+      `Duration: ${req.durationMonths} months`,
       "",
-      "── प्लेटफ़ॉर्म शुल्क / Platform Fees ──",
-      `कमीशन (${(PLATFORM_COMMISSION_RATE * 100).toFixed(0)}%) / Commission: ₹${commission.toLocaleString("en-IN")}`,
-      `उधारकर्ता को प्राप्त राशि / Net to Borrower: ₹${netAmount.toLocaleString("en-IN")}`,
-      "निकास शुल्क (ऋण बंद होने पर) / Exit Fee (on closure): ₹1",
+      "── Platform Fees ──",
+      `Commission (${(PLATFORM_COMMISSION_RATE * 100).toFixed(0)}%): ₹${commission.toLocaleString("en-IN")}`,
+      `Net Amount to Borrower: ₹${netAmount.toLocaleString("en-IN")}`,
+      "Exit Fee (on loan closure): ₹1",
       "",
-      "── कानूनी नोटिस / Legal Notice ──",
-      "यह एक कानूनी रूप से बाध्यकारी दस्तावेज़ है। भुगतान न करने पर भारतीय परक्राम्य लिखत अधिनियम, 1881 की धारा 138 के तहत कानूनी कार्रवाई हो सकती है।",
+      "── Legal Notice ──",
+      "This is a legally binding document. Non-payment may result in legal action under Section 138 of the Negotiable Instruments Act, 1881.",
     ].join("\n");
 
     const loan: Loan = {
@@ -82,12 +80,12 @@ export function ApproveLoan({ onNavigate }: ApproveLoanProps) {
 
     addLoan(loan);
     removeLoanRequest(reqId);
-    toast.success("ऋण अनुमोदित! / Loan approved successfully!");
+    toast.success("Loan approved successfully!");
   };
 
   const handleReject = (reqId: string) => {
     removeLoanRequest(reqId);
-    toast.info("ऋण अनुरोध अस्वीकार / Loan request rejected");
+    toast.info("Loan request rejected");
   };
 
   return (
@@ -98,15 +96,10 @@ export function ApproveLoan({ onNavigate }: ApproveLoanProps) {
         className="flex items-center gap-2 text-muted-foreground hover:text-foreground mb-6"
         data-ocid="approve.link"
       >
-        <ArrowLeft className="w-4 h-4" /> वापस
+        <ArrowLeft className="w-4 h-4" /> Back
       </button>
 
-      <h1 className="text-2xl font-bold font-devanagari mb-2">
-        ऋण अनुरोध अनुमोदन{" "}
-        <span className="text-muted-foreground font-normal text-lg">
-          / Approve Loan Requests
-        </span>
-      </h1>
+      <h1 className="text-2xl font-bold mb-2">Approve Loan Requests</h1>
 
       {/* Platform fee notice */}
       <div
@@ -115,16 +108,7 @@ export function ApproveLoan({ onNavigate }: ApproveLoanProps) {
       >
         <Info className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
         <div className="text-xs text-muted-foreground space-y-0.5">
-          <p className="font-semibold text-foreground">
-            प्लेटफ़ॉर्म शुल्क / Platform Fees
-          </p>
-          <p>
-            📌{" "}
-            <strong>
-              कमीशन {(PLATFORM_COMMISSION_RATE * 100).toFixed(0)}%
-            </strong>{" "}
-            — ऋण राशि पर प्रत्येक अनुमोदित ऋण पर लिया जाएगा।
-          </p>
+          <p className="font-semibold text-foreground">Platform Fees</p>
           <p>
             📌{" "}
             <strong>
@@ -133,8 +117,7 @@ export function ApproveLoan({ onNavigate }: ApproveLoanProps) {
             — Charged on loan principal for each approved loan.
           </p>
           <p>
-            📌 <strong>निकास शुल्क ₹1</strong> — ऋण बंद होने पर लिया जाएगा। /{" "}
-            <strong>Exit Fee ₹1</strong> charged on loan closure.
+            📌 <strong>Exit Fee ₹1</strong> — Charged on loan closure.
           </p>
         </div>
       </div>
@@ -142,9 +125,7 @@ export function ApproveLoan({ onNavigate }: ApproveLoanProps) {
       {loanRequests.length === 0 ? (
         <Card className="border-dashed" data-ocid="approve.empty_state">
           <CardContent className="py-16 text-center">
-            <p className="text-muted-foreground font-devanagari">
-              कोई लंबित अनुरोध नहीं / No pending requests
-            </p>
+            <p className="text-muted-foreground">No pending loan requests</p>
           </CardContent>
         </Card>
       ) : (
@@ -171,7 +152,7 @@ export function ApproveLoan({ onNavigate }: ApproveLoanProps) {
                         <CardTitle className="text-base">
                           {getUserName(req.borrowerId)}
                         </CardTitle>
-                        <p className="text-sm text-muted-foreground font-devanagari mt-1">
+                        <p className="text-sm text-muted-foreground mt-1">
                           {req.purpose}
                         </p>
                       </div>
@@ -190,21 +171,20 @@ export function ApproveLoan({ onNavigate }: ApproveLoanProps) {
                     {/* Commission Breakdown */}
                     <div className="rounded-lg border border-border bg-secondary/60 p-3 space-y-2 text-sm">
                       <p className="font-semibold text-xs uppercase tracking-wide text-muted-foreground mb-1">
-                        शुल्क विवरण / Fee Breakdown
+                        Fee Breakdown
                       </p>
                       <div className="flex justify-between">
-                        <span className="text-muted-foreground font-devanagari">
-                          मूल ऋण राशि / Principal
+                        <span className="text-muted-foreground">
+                          Principal Amount
                         </span>
                         <span className="font-semibold">
                           {formatCurrency(req.amount)}
                         </span>
                       </div>
                       <div className="flex justify-between text-[oklch(0.55_0.16_50)]">
-                        <span className="font-devanagari">
-                          प्लेटफ़ॉर्म कमीशन{" "}
-                          {(PLATFORM_COMMISSION_RATE * 100).toFixed(0)}% /
-                          Commission
+                        <span>
+                          Platform Commission{" "}
+                          {(PLATFORM_COMMISSION_RATE * 100).toFixed(0)}%
                         </span>
                         <span className="font-bold">
                           − {formatCurrency(commission)}
@@ -212,25 +192,24 @@ export function ApproveLoan({ onNavigate }: ApproveLoanProps) {
                       </div>
                       <Separator />
                       <div className="flex justify-between text-primary">
-                        <span className="font-bold font-devanagari">
-                          उधारकर्ता को मिलेगा / Net to Borrower
+                        <span className="font-bold">
+                          Net Amount to Borrower
                         </span>
                         <span className="font-bold text-lg">
                           {formatCurrency(netAmount)}
                         </span>
                       </div>
                       <p className="text-xs text-muted-foreground pt-1">
-                        ⚠️ उधारकर्ता पूरी ₹{req.amount.toLocaleString("en-IN")} +
-                        ब्याज वापस करेगा। Borrower repays full{" "}
-                        {formatCurrency(req.amount)} + interest.
+                        ⚠️ Borrower repays full {formatCurrency(req.amount)} +
+                        interest.
                       </p>
                     </div>
 
                     {/* Interest Rate Input + Actions */}
                     <div className="flex items-end gap-3">
                       <div className="flex-1">
-                        <Label className="text-xs font-devanagari">
-                          आपकी ब्याज दर (%) / Your Interest Rate
+                        <Label className="text-xs">
+                          Your Interest Rate (%)
                         </Label>
                         <Input
                           type="number"
@@ -249,7 +228,7 @@ export function ApproveLoan({ onNavigate }: ApproveLoanProps) {
                         />
                         {!Number.isNaN(rateVal) && rateVal >= 0 && (
                           <p className="text-xs text-muted-foreground mt-1">
-                            अनुरोधित / Requested: {req.requestedInterestRate}%
+                            Requested: {req.requestedInterestRate}%
                           </p>
                         )}
                       </div>
@@ -258,7 +237,7 @@ export function ApproveLoan({ onNavigate }: ApproveLoanProps) {
                         className="bg-[oklch(0.38_0.09_158)] hover:bg-[oklch(0.32_0.09_158)] text-white"
                         data-ocid={`approve.confirm_button.${idx + 1}`}
                       >
-                        <CheckCircle className="w-4 h-4 mr-1" /> अनुमोदन
+                        <CheckCircle className="w-4 h-4 mr-1" /> Approve
                       </Button>
                       <Button
                         variant="outline"
@@ -266,7 +245,7 @@ export function ApproveLoan({ onNavigate }: ApproveLoanProps) {
                         className="border-destructive text-destructive hover:bg-destructive/10"
                         data-ocid={`approve.delete_button.${idx + 1}`}
                       >
-                        <XCircle className="w-4 h-4 mr-1" /> अस्वीकार
+                        <XCircle className="w-4 h-4 mr-1" /> Reject
                       </Button>
                     </div>
                   </CardContent>

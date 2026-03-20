@@ -13,11 +13,11 @@ export function Navbar({ currentPage, onNavigate }: NavbarProps) {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const navLinks = [
-    { label: "डैशबोर्ड", page: "dashboard" },
-    { label: "सक्रिय ऋण", page: "active-loans" },
-    { label: "ऋण अनुरोध", page: "loan-requests" },
-    { label: "भुगतान करें", page: "repayment" },
-    { label: "दस्तावेज़", page: "documents" },
+    { label: "Dashboard", page: "dashboard" },
+    { label: "Active Loans", page: "active-loans" },
+    { label: "Loan Requests", page: "loan-requests" },
+    { label: "Repayment", page: "repayment" },
+    { label: "Documents", page: "documents" },
   ];
 
   const handleLogout = () => {
@@ -36,9 +36,9 @@ export function Navbar({ currentPage, onNavigate }: NavbarProps) {
           data-ocid="nav.link"
         >
           <Shield className="w-7 h-7" />
-          <span className="font-devanagari">रिनादोस्त</span>
+          <span>RinaDost</span>
           <span className="text-sm font-normal text-muted-foreground hidden sm:block">
-            RinaDost
+            P2P Lending
           </span>
         </button>
 
@@ -51,7 +51,7 @@ export function Navbar({ currentPage, onNavigate }: NavbarProps) {
                 key={link.page}
                 onClick={() => onNavigate(link.page)}
                 data-ocid="nav.link"
-                className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors font-devanagari ${
+                className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
                   currentPage === link.page
                     ? "bg-secondary text-primary"
                     : "text-muted-foreground hover:text-foreground hover:bg-muted"
@@ -90,7 +90,7 @@ export function Navbar({ currentPage, onNavigate }: NavbarProps) {
               onClick={() => onNavigate("auth")}
               data-ocid="nav.primary_button"
             >
-              लॉग इन करें
+              Sign In
             </Button>
           )}
 
@@ -123,7 +123,7 @@ export function Navbar({ currentPage, onNavigate }: NavbarProps) {
                 onNavigate(link.page);
                 setMenuOpen(false);
               }}
-              className={`block w-full text-left px-3 py-2 rounded-md text-sm font-medium font-devanagari transition-colors ${
+              className={`block w-full text-left px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                 currentPage === link.page
                   ? "bg-secondary text-primary"
                   : "text-muted-foreground hover:text-foreground"

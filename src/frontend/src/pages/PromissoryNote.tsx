@@ -60,7 +60,7 @@ export function PromissoryNote({ loanId, onNavigate }: PromissoryNoteProps) {
           className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
           data-ocid="note.link"
         >
-          <ArrowLeft className="w-4 h-4" /> वापस
+          <ArrowLeft className="w-4 h-4" /> Back
         </button>
         <Button
           onClick={handlePrint}
@@ -68,7 +68,7 @@ export function PromissoryNote({ loanId, onNavigate }: PromissoryNoteProps) {
           className="flex items-center gap-2"
           data-ocid="note.primary_button"
         >
-          <Printer className="w-4 h-4" /> Print / प्रिंट करें
+          <Printer className="w-4 h-4" /> Print
         </Button>
       </div>
 
@@ -80,9 +80,7 @@ export function PromissoryNote({ loanId, onNavigate }: PromissoryNoteProps) {
           <CardHeader className="text-center border-b border-border">
             <div className="flex items-center justify-center gap-2 mb-2">
               <FileText className="w-6 h-6 text-primary" />
-              <CardTitle className="text-xl font-devanagari">
-                प्रॉमिसरी नोट / Promissory Note
-              </CardTitle>
+              <CardTitle className="text-xl">Promissory Note</CardTitle>
             </div>
             <p className="text-sm text-muted-foreground">
               Date: {loan.startDate}
@@ -93,8 +91,8 @@ export function PromissoryNote({ loanId, onNavigate }: PromissoryNoteProps) {
             {/* Parties */}
             <div className="grid grid-cols-2 gap-4">
               <div className="p-4 bg-secondary rounded-lg">
-                <p className="text-xs font-semibold text-primary font-devanagari mb-2">
-                  उधारकर्ता / BORROWER
+                <p className="text-xs font-semibold text-primary mb-2">
+                  BORROWER
                 </p>
                 <p className="font-bold">{borrower?.name}</p>
                 <p className="text-sm text-muted-foreground">
@@ -102,8 +100,8 @@ export function PromissoryNote({ loanId, onNavigate }: PromissoryNoteProps) {
                 </p>
               </div>
               <div className="p-4 bg-secondary rounded-lg">
-                <p className="text-xs font-semibold text-primary font-devanagari mb-2">
-                  ऋणदाता / LENDER
+                <p className="text-xs font-semibold text-primary mb-2">
+                  LENDER
                 </p>
                 <p className="font-bold">{lender?.name}</p>
                 <p className="text-sm text-muted-foreground">{lender?.phone}</p>
@@ -112,26 +110,23 @@ export function PromissoryNote({ loanId, onNavigate }: PromissoryNoteProps) {
 
             {/* Loan Details */}
             <div>
-              <h3 className="text-sm font-bold font-devanagari mb-3 text-muted-foreground uppercase tracking-wide">
-                ऋण विवरण / Loan Details
+              <h3 className="text-sm font-bold mb-3 text-muted-foreground uppercase tracking-wide">
+                Loan Details
               </h3>
               <table className="w-full border-collapse text-sm">
                 <tbody>
                   {[
-                    ["ऋण राशि / Loan Amount", formatCurrency(loan.amount)],
-                    [
-                      "ब्याज दर / Interest Rate",
-                      `${loan.interestRate}% per annum`,
-                    ],
-                    ["अवधि / Duration", `${loan.durationMonths} months`],
-                    ["कुल ब्याज / Total Interest", formatCurrency(interest)],
-                    ["कुल देय / Total Due", formatCurrency(totalDue)],
-                    ["मासिक किस्त / Monthly EMI", formatCurrency(emi)],
-                    ["उद्देश्य / Purpose", loan.purpose],
-                    ["आरंभ तिथि / Start Date", loan.startDate],
+                    ["Loan Amount", formatCurrency(loan.amount)],
+                    ["Interest Rate", `${loan.interestRate}% per annum`],
+                    ["Duration", `${loan.durationMonths} months`],
+                    ["Total Interest", formatCurrency(interest)],
+                    ["Total Due", formatCurrency(totalDue)],
+                    ["Monthly EMI", formatCurrency(emi)],
+                    ["Purpose", loan.purpose],
+                    ["Start Date", loan.startDate],
                   ].map(([label, value]) => (
                     <tr key={label} className="border border-border">
-                      <td className="px-4 py-2 bg-secondary font-medium font-devanagari w-1/2 text-sm">
+                      <td className="px-4 py-2 bg-secondary font-medium w-1/2 text-sm">
                         {label}
                       </td>
                       <td className="px-4 py-2 font-semibold text-primary text-sm">
@@ -145,40 +140,38 @@ export function PromissoryNote({ loanId, onNavigate }: PromissoryNoteProps) {
 
             <Separator />
 
-            {/* ── Platform Fee Breakdown ─────────────────────────── */}
+            {/* Platform Fee Breakdown */}
             <div>
-              <h3 className="text-sm font-bold font-devanagari mb-3 text-muted-foreground uppercase tracking-wide">
-                प्लेटफ़ॉर्म शुल्क विवरण / Platform Fee Breakdown
+              <h3 className="text-sm font-bold mb-3 text-muted-foreground uppercase tracking-wide">
+                Platform Fee Breakdown
               </h3>
               <div className="rounded-lg border border-primary/20 bg-primary/5 overflow-hidden">
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="bg-primary/10">
-                      <th className="px-4 py-2 text-left font-semibold text-primary font-devanagari">
-                        शुल्क प्रकार / Fee Type
+                      <th className="px-4 py-2 text-left font-semibold text-primary">
+                        Fee Type
                       </th>
                       <th className="px-4 py-2 text-left font-semibold text-primary">
-                        विवरण / Detail
+                        Detail
                       </th>
                       <th className="px-4 py-2 text-right font-semibold text-primary">
-                        राशि / Amount
+                        Amount
                       </th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr className="border-t border-primary/10">
-                      <td className="px-4 py-3 font-devanagari">
-                        प्रवेश शुल्क / Entry Fee
-                      </td>
+                      <td className="px-4 py-3">Entry Fee</td>
                       <td className="px-4 py-3 text-muted-foreground text-xs">
                         Charged once at registration
                       </td>
                       <td className="px-4 py-3 text-right font-bold">₹1</td>
                     </tr>
                     <tr className="border-t border-primary/10 bg-[oklch(0.96_0.06_50_/_0.4)]">
-                      <td className="px-4 py-3 font-devanagari">
-                        कमीशन {(PLATFORM_COMMISSION_RATE * 100).toFixed(0)}% /
-                        Commission
+                      <td className="px-4 py-3">
+                        Commission {(PLATFORM_COMMISSION_RATE * 100).toFixed(0)}
+                        %
                       </td>
                       <td className="px-4 py-3 text-muted-foreground text-xs">
                         {(PLATFORM_COMMISSION_RATE * 100).toFixed(0)}% of{" "}
@@ -189,9 +182,7 @@ export function PromissoryNote({ loanId, onNavigate }: PromissoryNoteProps) {
                       </td>
                     </tr>
                     <tr className="border-t border-primary/10">
-                      <td className="px-4 py-3 font-devanagari">
-                        निकास शुल्क / Exit Fee
-                      </td>
+                      <td className="px-4 py-3">Exit Fee</td>
                       <td className="px-4 py-3 text-muted-foreground text-xs">
                         Charged on loan closure / final repayment
                       </td>
@@ -200,11 +191,8 @@ export function PromissoryNote({ loanId, onNavigate }: PromissoryNoteProps) {
                       </td>
                     </tr>
                     <tr className="border-t-2 border-primary/30 bg-primary/10">
-                      <td
-                        className="px-4 py-3 font-bold font-devanagari"
-                        colSpan={2}
-                      >
-                        कुल प्लेटफ़ॉर्म शुल्क / Total Platform Fees
+                      <td className="px-4 py-3 font-bold" colSpan={2}>
+                        Total Platform Fees
                       </td>
                       <td className="px-4 py-3 text-right font-bold text-primary text-base">
                         {formatCurrency(
@@ -220,8 +208,8 @@ export function PromissoryNote({ loanId, onNavigate }: PromissoryNoteProps) {
               <div className="mt-3 p-4 rounded-lg bg-[oklch(0.94_0.05_158)] border border-[oklch(0.80_0.06_158)]">
                 <div className="flex justify-between items-center">
                   <div>
-                    <p className="font-bold font-devanagari text-[oklch(0.38_0.09_158)]">
-                      उधारकर्ता को प्राप्त राशि / Net Amount to Borrower
+                    <p className="font-bold text-[oklch(0.38_0.09_158)]">
+                      Net Amount to Borrower
                     </p>
                     <p className="text-xs text-[oklch(0.45_0.07_158)] mt-0.5">
                       After deducting{" "}
@@ -233,10 +221,10 @@ export function PromissoryNote({ loanId, onNavigate }: PromissoryNoteProps) {
                     {formatCurrency(loan.netAmountToBorrower)}
                   </p>
                 </div>
-                <p className="text-xs text-[oklch(0.45_0.07_158)] mt-2 font-devanagari">
-                  ⚠️ उधारकर्ता पूरी {formatCurrency(loan.amount)} + ब्याज (
-                  {formatCurrency(interest)}) = {formatCurrency(totalDue)} वापस
-                  करेगा।
+                <p className="text-xs text-[oklch(0.45_0.07_158)] mt-2">
+                  ⚠️ Borrower must repay the full {formatCurrency(loan.amount)} +
+                  interest ({formatCurrency(interest)}) ={" "}
+                  {formatCurrency(totalDue)}.
                 </p>
               </div>
             </div>
@@ -246,10 +234,10 @@ export function PromissoryNote({ loanId, onNavigate }: PromissoryNoteProps) {
             {/* Note text */}
             {loan.promissoryNote && (
               <div>
-                <h3 className="text-sm font-bold font-devanagari mb-3 text-muted-foreground uppercase tracking-wide">
-                  प्रॉमिसरी नोट पाठ / Note Text
+                <h3 className="text-sm font-bold mb-3 text-muted-foreground uppercase tracking-wide">
+                  Note Text
                 </h3>
-                <pre className="whitespace-pre-wrap text-sm bg-secondary/50 p-4 rounded-lg border border-border font-devanagari leading-relaxed">
+                <pre className="whitespace-pre-wrap text-sm bg-secondary/50 p-4 rounded-lg border border-border leading-relaxed">
                   {loan.promissoryNote}
                 </pre>
               </div>
@@ -257,15 +245,10 @@ export function PromissoryNote({ loanId, onNavigate }: PromissoryNoteProps) {
 
             {/* Legal Clause */}
             <div className="p-4 bg-[oklch(0.96_0.06_27)] rounded-lg border border-[oklch(0.85_0.12_27)] text-sm">
-              <p className="font-bold text-[oklch(0.45_0.18_27)] font-devanagari mb-2">
-                ⚖️ कानूनी सूचना / Legal Notice
+              <p className="font-bold text-[oklch(0.45_0.18_27)] mb-2">
+                ⚖️ Legal Notice
               </p>
-              <p className="text-[oklch(0.45_0.18_27)] font-devanagari text-sm">
-                यह एक कानूनी रूप से बाध्यकारी दस्तावेज़ है। भुगतान न करने पर भारतीय
-                परक्राम्य लिखत अधिनियम, 1881 की धारा 138 के तहत कानूनी कार्रवाई हो
-                सकती है।
-              </p>
-              <p className="text-xs text-[oklch(0.55_0.15_27)] mt-1">
+              <p className="text-[oklch(0.45_0.18_27)] text-sm">
                 This is a legally binding document. Non-payment may result in
                 legal action under Section 138 of the Negotiable Instruments
                 Act, 1881.
@@ -276,18 +259,14 @@ export function PromissoryNote({ loanId, onNavigate }: PromissoryNoteProps) {
             <div className="grid grid-cols-2 gap-6 mt-4 pt-6 border-t border-border">
               <div className="text-center">
                 <div className="h-12 border-b border-foreground/30 mb-2" />
-                <p className="text-sm font-devanagari">
-                  उधारकर्ता हस्ताक्षर / Borrower Signature
-                </p>
+                <p className="text-sm">Borrower Signature</p>
                 <p className="text-xs text-muted-foreground">
                   {borrower?.name}
                 </p>
               </div>
               <div className="text-center">
                 <div className="h-12 border-b border-foreground/30 mb-2" />
-                <p className="text-sm font-devanagari">
-                  ऋणदाता हस्ताक्षर / Lender Signature
-                </p>
+                <p className="text-sm">Lender Signature</p>
                 <p className="text-xs text-muted-foreground">{lender?.name}</p>
               </div>
             </div>

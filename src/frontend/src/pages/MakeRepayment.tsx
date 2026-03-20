@@ -66,12 +66,12 @@ export function MakeRepayment({ onNavigate }: MakeRepaymentProps) {
 
   const validate = () => {
     const errs: Record<string, string> = {};
-    if (!selectedLoanId) errs.loan = "ऋण चुनें / Select a loan";
+    if (!selectedLoanId) errs.loan = "Please select a loan";
     const amt = Number.parseFloat(amount);
     if (!amount || Number.isNaN(amt) || amt <= 0)
-      errs.amount = "राशि आवश्यक है / Amount required";
+      errs.amount = "Amount is required";
     else if (amt > remaining)
-      errs.amount = `अधिकतम ${formatCurrency(remaining)} शेष है`;
+      errs.amount = `Maximum remaining amount is ${formatCurrency(remaining)}`;
     return errs;
   };
 
@@ -89,7 +89,7 @@ export function MakeRepayment({ onNavigate }: MakeRepaymentProps) {
       loanId: selectedLoanId,
       amount: paymentAmt,
       date: new Date().toISOString().split("T")[0],
-      note: note.trim() || "किस्त / Installment",
+      note: note.trim() || "Installment",
     };
     addRepayment(r);
 
@@ -102,15 +102,13 @@ export function MakeRepayment({ onNavigate }: MakeRepaymentProps) {
         userId: currentUser.id,
         loanId: selectedLoanId,
         date: new Date().toISOString().split("T")[0],
-        description: `निकास शुल्क / Exit Fee — ऋण बंद: ${formatCurrency(selectedLoan.amount)}`,
+        description: `Exit Fee — Loan closed: ${formatCurrency(selectedLoan.amount)}`,
       };
       addFeeRecord(exitFee);
       updateLoan({ ...selectedLoan, status: "completed" });
-      toast.success(
-        `ऋण पूर्ण! निकास शुल्क ₹${PLATFORM_EXIT_FEE} लिया गया। / Loan closed! Exit fee ₹${PLATFORM_EXIT_FEE} charged.`,
-      );
+      toast.success(`Loan fully paid! Exit fee ₹${PLATFORM_EXIT_FEE} charged.`);
     } else {
-      toast.success("भुगतान सफलतापूर्वक दर्ज! / Payment recorded!");
+      toast.success("Payment recorded successfully!");
     }
 
     setAmount("");
@@ -128,7 +126,7 @@ export function MakeRepayment({ onNavigate }: MakeRepaymentProps) {
         className="flex items-center gap-2 text-muted-foreground hover:text-foreground mb-6"
         data-ocid="repayment.link"
       >
-        <ArrowLeft className="w-4 h-4" /> वापस
+        <ArrowLeft className="w-4 h-4" /> Back
       </button>
 
       <motion.div
@@ -137,9 +135,9 @@ export function MakeRepayment({ onNavigate }: MakeRepaymentProps) {
       >
         <Card className="border-border shadow-md">
           <CardHeader>
-            <CardTitle className="text-xl font-devanagari flex items-center gap-2">
+            <CardTitle className="text-xl flex items-center gap-2">
               <CheckCircle className="w-5 h-5 text-primary" />
-              किस्त भुगतान / Make Repayment
+              Make a Repayment
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -148,20 +146,20 @@ export function MakeRepayment({ onNavigate }: MakeRepaymentProps) {
                 className="py-12 text-center"
                 data-ocid="repayment.empty_state"
               >
-                <p className="text-muted-foreground font-devanagari">
-                  आपके पास कोई सक्रिय ऋण नहीं है।
+                <p className="text-muted-foreground">
+                  You have no active loans.
                 </p>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div>
-                  <Label className="font-devanagari">ऋण चुनें / Select Loan</Label>
+                  <Label>Select Loan</Label>
                   <Select
                     value={selectedLoanId}
                     onValueChange={setSelectedLoanId}
                   >
                     <SelectTrigger data-ocid="repayment.select">
-                      <SelectValue placeholder="ऋण चुनें..." />
+                      <SelectValue placeholder="Choose a loan..." />
                     </SelectTrigger>
                     <SelectContent>
                       {borrowerLoans.map((l) => (
@@ -185,29 +183,25 @@ export function MakeRepayment({ onNavigate }: MakeRepaymentProps) {
                 {selectedLoan && (
                   <div className="p-4 bg-secondary rounded-lg space-y-2 text-sm">
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground font-devanagari">
-                        ऋणदाता
-                      </span>
+                      <span className="text-muted-foreground">Lender</span>
                       <span className="font-medium">{lenderName}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground font-devanagari">
-                        कुल देय
-                      </span>
+                      <span className="text-muted-foreground">Total Due</span>
                       <span className="font-medium">
                         {formatCurrency(totalDue)}
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground font-devanagari">
-                        भुगतान हो चुका
+                      <span className="text-muted-foreground">
+                        Already Paid
                       </span>
                       <span className="text-[oklch(0.38_0.09_158)] font-medium">
                         {formatCurrency(alreadyPaid)}
                       </span>
                     </div>
                     <div className="flex justify-between font-bold border-t border-border pt-2">
-                      <span className="font-devanagari">शेष राशि</span>
+                      <span>Remaining Balance</span>
                       <span className="text-primary">
                         {formatCurrency(remaining)}
                       </span>
@@ -224,9 +218,7 @@ export function MakeRepayment({ onNavigate }: MakeRepaymentProps) {
                 )}
 
                 <div>
-                  <Label className="font-devanagari">
-                    भुगतान राशि (₹) / Payment Amount
-                  </Label>
+                  <Label>Payment Amount (₹)</Label>
                   <Input
                     type="number"
                     value={amount}
@@ -257,12 +249,12 @@ export function MakeRepayment({ onNavigate }: MakeRepaymentProps) {
                       <IndianRupee className="w-4 h-4 text-primary" />
                     </div>
                     <div>
-                      <p className="text-sm font-bold text-primary font-devanagari">
-                        🎉 ऋण बंद होगा! निकास शुल्क लागू होगा।
+                      <p className="text-sm font-bold text-primary">
+                        🎉 Loan will be fully closed!
                       </p>
-                      <p className="text-xs text-muted-foreground mt-0.5 font-devanagari">
-                        निकास शुल्क / Exit Fee:{" "}
-                        <strong>₹{PLATFORM_EXIT_FEE}</strong> प्लेटफ़ॉर्म को जाएगा।
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        Exit Fee: <strong>₹{PLATFORM_EXIT_FEE}</strong> will be
+                        charged to the platform.
                       </p>
                       <p className="text-xs text-muted-foreground">
                         Loan will be marked complete. Exit fee ₹
@@ -273,13 +265,11 @@ export function MakeRepayment({ onNavigate }: MakeRepaymentProps) {
                 )}
 
                 <div>
-                  <Label className="font-devanagari">
-                    नोट (वैकल्पिक) / Note (Optional)
-                  </Label>
+                  <Label>Note (Optional)</Label>
                   <Textarea
                     value={note}
                     onChange={(e) => setNote(e.target.value)}
-                    placeholder="जैसे: किस्त 3, दिसंबर 2025..."
+                    placeholder="e.g. Installment 3, December 2025..."
                     rows={2}
                     data-ocid="repayment.textarea"
                   />
@@ -291,8 +281,8 @@ export function MakeRepayment({ onNavigate }: MakeRepaymentProps) {
                   data-ocid="repayment.submit_button"
                 >
                   {willComplete
-                    ? `ऋण बंद करें + ₹${PLATFORM_EXIT_FEE} निकास शुल्क / Close Loan`
-                    : "भुगतान दर्ज करें / Record Payment"}
+                    ? `Close Loan + ₹${PLATFORM_EXIT_FEE} Exit Fee`
+                    : "Record Payment"}
                 </Button>
               </form>
             )}

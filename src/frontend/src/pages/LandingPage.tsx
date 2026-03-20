@@ -10,27 +10,27 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
   const features = [
     {
       icon: Shield,
-      title: "कानूनी सुरक्षा",
-      sub: "Legal Protection",
-      desc: "हर लेन-देन के साथ कानूनी प्रॉमिसरी नोट",
+      title: "Legal Protection",
+      sub: "Legally Enforceable",
+      desc: "Every loan is backed by legal safeguards including a promissory note.",
     },
     {
       icon: FileText,
-      title: "डिजिटल दस्तावेज़",
+      title: "Digital Documents",
       sub: "Digital Documents",
-      desc: "सभी दस्तावेज़ सुरक्षित और डाउनलोड करने योग्य",
+      desc: "Auto-generated digital promissory notes stored securely for every loan.",
     },
     {
       icon: TrendingUp,
-      title: "ब्याज के साथ रिटर्न",
+      title: "Earn Interest",
       sub: "Earn Interest",
-      desc: "अपने पैसे पर आकर्षक ब्याज दर कमाएं",
+      desc: "Lend your money and earn attractive interest returns.",
     },
     {
       icon: Users,
-      title: "विश्वसनीय नेटवर्क",
+      title: "Trusted Network",
       sub: "Trusted Network",
-      desc: "केवल सत्यापित उपयोगकर्ताओं के साथ लेन-देन",
+      desc: "Build a trusted circle of lenders and borrowers you can rely on.",
     },
   ];
 
@@ -49,14 +49,15 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
               <p className="text-primary font-semibold text-sm uppercase tracking-widest mb-3">
                 Trusted P2P Lending App
               </p>
-              <h1 className="text-4xl md:text-5xl font-bold text-foreground leading-tight mb-4 font-devanagari">
-                दोस्तों को ऋण दें,
+              <h1 className="text-4xl md:text-5xl font-bold text-foreground leading-tight mb-4">
+                Lend with confidence,
                 <br />
-                <span className="text-primary">विश्वास के साथ</span>
+                <span className="text-primary">Borrow with trust</span>
               </h1>
-              <p className="text-muted-foreground text-lg mb-8 font-devanagari">
-                बिना किसी झंझट के अपने नजदीकियों को पैसे दें और कानूनी सुरक्षा के साथ वापस
-                पाएं। अधिकतम ₹1,00,000 तक का लेन-देन।
+              <p className="text-muted-foreground text-lg mb-8">
+                Connect with trusted friends and family for peer-to-peer lending
+                with full legal documentation and a maximum transaction limit of
+                ₹1,00,000.
               </p>
               <div className="flex flex-wrap gap-4">
                 <Button
@@ -65,7 +66,7 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
                   onClick={() => onNavigate("auth")}
                   data-ocid="hero.primary_button"
                 >
-                  ऋण दें (Give Loan)
+                  Give a Loan
                 </Button>
                 <Button
                   size="lg"
@@ -74,12 +75,14 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
                   onClick={() => onNavigate("auth")}
                   data-ocid="hero.secondary_button"
                 >
-                  ऋण लें (Take Loan)
+                  Request a Loan
                 </Button>
               </div>
               <div className="mt-8 flex items-center gap-2 text-sm text-muted-foreground">
                 <CheckCircle className="w-4 h-4 text-primary" />
-                <span>100% कानूनी रूप से सुरक्षित लेन-देन</span>
+                <span>
+                  100% legally compliant with promissory note protection
+                </span>
               </div>
             </motion.div>
 
@@ -98,8 +101,8 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
                 />
               </div>
               <div className="absolute -bottom-4 -left-4 bg-card rounded-xl p-4 shadow-lg border border-border">
-                <p className="text-xs text-muted-foreground font-devanagari">
-                  अधिकतम ऋण राशि
+                <p className="text-xs text-muted-foreground">
+                  Maximum Loan Amount
                 </p>
                 <p className="text-2xl font-bold text-primary">₹1,00,000</p>
               </div>
@@ -117,9 +120,7 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
             viewport={{ once: true }}
             className="text-center mb-12"
           >
-            <h2 className="text-3xl font-bold font-devanagari mb-2">
-              हमारी विशेषताएं
-            </h2>
+            <h2 className="text-3xl font-bold mb-2">Our Key Features</h2>
             <p className="text-muted-foreground">Why choose RinaDost?</p>
           </motion.div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -135,11 +136,9 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
                 <div className="w-12 h-12 bg-secondary rounded-lg flex items-center justify-center mb-4">
                   <f.icon className="w-6 h-6 text-primary" />
                 </div>
-                <h3 className="font-bold font-devanagari mb-1">{f.title}</h3>
+                <h3 className="font-bold mb-1">{f.title}</h3>
                 <p className="text-xs text-muted-foreground mb-2">{f.sub}</p>
-                <p className="text-sm text-muted-foreground font-devanagari">
-                  {f.desc}
-                </p>
+                <p className="text-sm text-muted-foreground">{f.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -149,7 +148,7 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
       {/* CTA Banner */}
       <section className="bg-primary text-primary-foreground py-16">
         <div className="max-w-7xl mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold font-devanagari mb-4">अभी शुरू करें</h2>
+          <h2 className="text-3xl font-bold mb-4">Ready to get started?</h2>
           <p className="text-lg opacity-90 mb-8">
             Join thousands of trusted lenders and borrowers
           </p>
@@ -159,7 +158,7 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
             onClick={() => onNavigate("auth")}
             data-ocid="cta.primary_button"
           >
-            निःशुल्क पंजीकरण करें — Register Free
+            Register for Free
           </Button>
         </div>
       </section>

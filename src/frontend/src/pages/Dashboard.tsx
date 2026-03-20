@@ -36,22 +36,22 @@ interface DashboardProps {
 
 const LEGAL_STATUS_CONFIG = {
   normal: {
-    label: "सामान्य / Normal",
+    label: "Normal",
     color:
       "bg-[oklch(0.94_0.05_158)] text-[oklch(0.38_0.09_158)] border-[oklch(0.80_0.06_158)]",
   },
   warning: {
-    label: "चेतावनी / Warning",
+    label: "Warning",
     color:
       "bg-[oklch(0.96_0.06_85)] text-[oklch(0.55_0.16_85)] border-[oklch(0.85_0.10_85)]",
   },
   legal_pending: {
-    label: "कानूनी लंबित / Legal Pending",
+    label: "Legal Pending",
     color:
       "bg-[oklch(0.96_0.06_50)] text-[oklch(0.55_0.16_50)] border-[oklch(0.85_0.10_50)]",
   },
   action_initiated: {
-    label: "कार्रवाई शुरू / Action Initiated",
+    label: "Action Initiated",
     color:
       "bg-[oklch(0.96_0.06_27)] text-[oklch(0.55_0.20_27)] border-[oklch(0.85_0.12_27)]",
   },
@@ -110,14 +110,9 @@ export function Dashboard({ onNavigate }: DashboardProps) {
         animate={{ opacity: 1, y: 0 }}
         className="mb-8"
       >
-        <h1 className="text-2xl font-bold font-devanagari">
-          ऋण डैशबोर्ड{" "}
-          <span className="text-muted-foreground font-normal text-lg">
-            / Loan Dashboard
-          </span>
-        </h1>
+        <h1 className="text-2xl font-bold">Loan Dashboard</h1>
         <p className="text-muted-foreground mt-1">
-          नमस्ते, {currentUser.name} 👋
+          Welcome, {currentUser.name} 👋
         </p>
       </motion.div>
 
@@ -126,29 +121,29 @@ export function Dashboard({ onNavigate }: DashboardProps) {
         {[
           {
             icon: CreditCard,
-            label: "सक्रिय ऋण",
-            sub: "Active Loans",
+            label: "Active Loans",
+            sub: "Currently active",
             value: activeLoans.length.toString(),
             color: "text-primary",
           },
           {
             icon: IndianRupee,
-            label: "कुल राशि",
-            sub: "Total Amount",
+            label: "Total Amount",
+            sub: "Across all loans",
             value: formatCurrency(totalAmount),
             color: "text-primary",
           },
           {
             icon: TrendingUp,
-            label: "शेष भुगतान",
-            sub: "Remaining",
+            label: "Remaining",
+            sub: "Still to be paid",
             value: formatCurrency(totalRemaining),
             color: "text-[oklch(0.55_0.16_50)]",
           },
           {
             icon: AlertTriangle,
-            label: "औसत ब्याज",
-            sub: "Avg Interest",
+            label: "Avg Interest",
+            sub: "Average rate",
             value: `${avgInterest}%`,
             color: "text-[oklch(0.55_0.16_85)]",
           },
@@ -163,9 +158,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
               <CardContent className="p-5">
                 <div className="flex items-start justify-between">
                   <div>
-                    <p className="text-xs font-devanagari text-muted-foreground">
-                      {kpi.label}
-                    </p>
+                    <p className="text-xs text-muted-foreground">{kpi.label}</p>
                     <p className="text-xs text-muted-foreground">{kpi.sub}</p>
                     <p className={`text-xl font-bold mt-2 ${kpi.color}`}>
                       {kpi.value}
@@ -188,7 +181,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
             onClick={() => onNavigate("new-loan")}
             data-ocid="dashboard.primary_button"
           >
-            <Plus className="w-4 h-4 mr-2" /> ऋण अनुरोध करें / Request Loan
+            <Plus className="w-4 h-4 mr-2" /> Request a Loan
           </Button>
         )}
         {(currentUser.role === "lender" || currentUser.role === "both") && (
@@ -197,7 +190,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
             onClick={() => onNavigate("loan-requests")}
             data-ocid="dashboard.secondary_button"
           >
-            ऋण अनुमोदन / Approve Loans
+            Approve Loans
           </Button>
         )}
         <Button
@@ -205,24 +198,17 @@ export function Dashboard({ onNavigate }: DashboardProps) {
           onClick={() => onNavigate("repayment")}
           data-ocid="dashboard.secondary_button"
         >
-          भुगतान करें / Make Payment
+          Make a Payment
         </Button>
       </div>
 
       {/* Active Loans */}
       <section className="mb-8">
-        <h2 className="text-lg font-bold font-devanagari mb-4">
-          सक्रिय ऋण{" "}
-          <span className="text-muted-foreground font-normal text-sm">
-            / Active Loans
-          </span>
-        </h2>
+        <h2 className="text-lg font-bold mb-4">Active Loans</h2>
         {activeLoans.length === 0 ? (
           <Card className="border-dashed" data-ocid="loans.empty_state">
             <CardContent className="py-12 text-center">
-              <p className="text-muted-foreground font-devanagari">
-                कोई सक्रिय ऋण नहीं / No active loans
-              </p>
+              <p className="text-muted-foreground">No active loans</p>
             </CardContent>
           </Card>
         ) : (
@@ -252,8 +238,8 @@ export function Dashboard({ onNavigate }: DashboardProps) {
                     <CardHeader className="pb-2">
                       <div className="flex items-start justify-between">
                         <div>
-                          <p className="text-xs text-muted-foreground font-devanagari">
-                            {isBorrower ? "ऋणदाता" : "उधारकर्ता"}
+                          <p className="text-xs text-muted-foreground">
+                            {isBorrower ? "Lender" : "Borrower"}
                           </p>
                           <CardTitle className="text-base">
                             {otherUser}
@@ -269,8 +255,8 @@ export function Dashboard({ onNavigate }: DashboardProps) {
                     <CardContent>
                       <div className="space-y-3">
                         <div className="flex justify-between">
-                          <span className="text-sm text-muted-foreground font-devanagari">
-                            मूल राशि
+                          <span className="text-sm text-muted-foreground">
+                            Principal
                           </span>
                           <span className="font-bold text-primary">
                             {formatCurrency(loan.amount)}
@@ -279,8 +265,8 @@ export function Dashboard({ onNavigate }: DashboardProps) {
                         {/* Net amount to borrower */}
                         {isBorrower && (
                           <div className="flex justify-between text-xs">
-                            <span className="text-muted-foreground font-devanagari">
-                              आपको मिला (कमीशन के बाद)
+                            <span className="text-muted-foreground">
+                              You received (after commission)
                             </span>
                             <span className="font-semibold text-[oklch(0.38_0.09_158)]">
                               {formatCurrency(loan.netAmountToBorrower)}
@@ -288,8 +274,9 @@ export function Dashboard({ onNavigate }: DashboardProps) {
                           </div>
                         )}
                         <div className="flex justify-between text-xs">
-                          <span className="text-muted-foreground font-devanagari">
-                            कमीशन ({(PLATFORM_COMMISSION_RATE * 100).toFixed(0)}
+                          <span className="text-muted-foreground">
+                            Commission (
+                            {(PLATFORM_COMMISSION_RATE * 100).toFixed(0)}
                             %)
                           </span>
                           <span className="text-[oklch(0.55_0.16_50)] font-medium">
@@ -305,8 +292,8 @@ export function Dashboard({ onNavigate }: DashboardProps) {
                           </span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-sm text-muted-foreground font-devanagari">
-                            मासिक किस्त
+                          <span className="text-sm text-muted-foreground">
+                            Monthly EMI
                           </span>
                           <span className="font-medium">
                             {formatCurrency(monthlyEMI)}
@@ -314,7 +301,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
                         </div>
                         <div>
                           <div className="flex justify-between text-xs text-muted-foreground mb-1">
-                            <span>भुगतान प्रगति / Progress</span>
+                            <span>Payment Progress</span>
                             <span>{progressPct.toFixed(0)}%</span>
                           </div>
                           <Progress value={progressPct} className="h-2" />
@@ -335,7 +322,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
                             onClick={() => onNavigate(`promissory-${loan.id}`)}
                             data-ocid={`loans.edit_button.${idx + 1}`}
                           >
-                            <FileText className="w-3 h-3 mr-1" /> नोट देखें
+                            <FileText className="w-3 h-3 mr-1" /> View Note
                           </Button>
                           {!isBorrower && (
                             <Button
@@ -345,7 +332,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
                               onClick={() => onNavigate(`legal-${loan.id}`)}
                               data-ocid={`loans.delete_button.${idx + 1}`}
                             >
-                              <AlertTriangle className="w-3 h-3 mr-1" /> कानूनी
+                              <AlertTriangle className="w-3 h-3 mr-1" /> Legal
                             </Button>
                           )}
                         </div>
@@ -361,21 +348,16 @@ export function Dashboard({ onNavigate }: DashboardProps) {
 
       {/* Transaction History */}
       <section className="mb-8">
-        <h2 className="text-lg font-bold font-devanagari mb-4">
-          लेन-देन इतिहास{" "}
-          <span className="text-muted-foreground font-normal text-sm">
-            / Transaction History
-          </span>
-        </h2>
+        <h2 className="text-lg font-bold mb-4">Transaction History</h2>
         <Card className="border-border">
           <CardContent className="p-0">
             <Table data-ocid="transactions.table">
               <TableHeader>
                 <TableRow className="bg-secondary/50">
-                  <TableHead className="font-devanagari">दिनांक</TableHead>
-                  <TableHead className="font-devanagari">विवरण</TableHead>
-                  <TableHead className="font-devanagari">राशि</TableHead>
-                  <TableHead className="font-devanagari">स्थिति</TableHead>
+                  <TableHead>Date</TableHead>
+                  <TableHead>Description</TableHead>
+                  <TableHead>Amount</TableHead>
+                  <TableHead>Status</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -386,7 +368,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
                       className="text-center text-muted-foreground py-8"
                       data-ocid="transactions.empty_state"
                     >
-                      कोई लेन-देन नहीं / No transactions yet
+                      No transactions yet
                     </TableCell>
                   </TableRow>
                 ) : (
@@ -396,15 +378,13 @@ export function Dashboard({ onNavigate }: DashboardProps) {
                       data-ocid={`transactions.row.${idx + 1}`}
                     >
                       <TableCell className="text-sm">{r.date}</TableCell>
-                      <TableCell className="text-sm font-devanagari">
-                        {r.note}
-                      </TableCell>
+                      <TableCell className="text-sm">{r.note}</TableCell>
                       <TableCell className="text-sm font-semibold text-primary">
                         {formatCurrency(r.amount)}
                       </TableCell>
                       <TableCell>
                         <Badge className="bg-[oklch(0.94_0.05_158)] text-[oklch(0.38_0.09_158)] border-0">
-                          भुगतान / Paid
+                          Paid
                         </Badge>
                       </TableCell>
                     </TableRow>
@@ -416,39 +396,36 @@ export function Dashboard({ onNavigate }: DashboardProps) {
         </Card>
       </section>
 
-      {/* ── Admin Earnings Section ─────────────────────────────────── */}
+      {/* Admin Earnings Section */}
       <section className="mb-8">
-        <h2 className="text-lg font-bold font-devanagari mb-4 flex items-center gap-2">
+        <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
           <Wallet className="w-5 h-5 text-primary" />
-          एडमिन आय{" "}
-          <span className="text-muted-foreground font-normal text-sm">
-            / Admin Earnings
-          </span>
+          Admin Earnings
         </h2>
 
         {/* Summary KPI row */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
           {[
             {
-              label: "कुल आय",
-              sub: "Total Earnings",
+              label: "Total Earnings",
+              sub: "All revenue",
               value: formatCurrency(totalAdminEarnings),
               highlight: true,
             },
             {
-              label: `कमीशन (${(PLATFORM_COMMISSION_RATE * 100).toFixed(0)}%)`,
+              label: `Commission (${(PLATFORM_COMMISSION_RATE * 100).toFixed(0)}%)`,
               sub: "Commissions",
               value: formatCurrency(totalCommission),
               highlight: false,
             },
             {
-              label: `प्रवेश शुल्क (₹${PLATFORM_ENTRY_FEE})`,
+              label: `Entry Fees (₹${PLATFORM_ENTRY_FEE})`,
               sub: "Entry Fees",
               value: formatCurrency(totalEntryFees),
               highlight: false,
             },
             {
-              label: `निकास शुल्क (₹${PLATFORM_EXIT_FEE})`,
+              label: `Exit Fees (₹${PLATFORM_EXIT_FEE})`,
               sub: "Exit Fees",
               value: formatCurrency(totalExitFees),
               highlight: false,
@@ -468,9 +445,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
                 }`}
               >
                 <CardContent className="p-4">
-                  <p className="text-xs font-devanagari text-muted-foreground">
-                    {item.label}
-                  </p>
+                  <p className="text-xs text-muted-foreground">{item.label}</p>
                   <p className="text-xs text-muted-foreground">{item.sub}</p>
                   <p
                     className={`text-lg font-bold mt-1 ${
@@ -488,18 +463,16 @@ export function Dashboard({ onNavigate }: DashboardProps) {
         {/* Recent fee log */}
         <Card className="border-border">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-devanagari">
-              हाल के शुल्क लेनदेन / Recent Fee Transactions
-            </CardTitle>
+            <CardTitle className="text-sm">Recent Fee Transactions</CardTitle>
           </CardHeader>
           <CardContent className="p-0">
             <Table data-ocid="fees.table">
               <TableHeader>
                 <TableRow className="bg-secondary/50">
-                  <TableHead className="text-xs">दिनांक / Date</TableHead>
-                  <TableHead className="text-xs">विवरण / Description</TableHead>
-                  <TableHead className="text-xs">प्रकार / Type</TableHead>
-                  <TableHead className="text-xs">राशि / Amount</TableHead>
+                  <TableHead className="text-xs">Date</TableHead>
+                  <TableHead className="text-xs">Description</TableHead>
+                  <TableHead className="text-xs">Type</TableHead>
+                  <TableHead className="text-xs">Amount</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -510,14 +483,14 @@ export function Dashboard({ onNavigate }: DashboardProps) {
                       className="text-center py-6 text-muted-foreground text-sm"
                       data-ocid="fees.empty_state"
                     >
-                      कोई शुल्क लेनदेन नहीं
+                      No fee transactions yet
                     </TableCell>
                   </TableRow>
                 ) : (
                   recentFees.map((fee, idx) => (
                     <TableRow key={fee.id} data-ocid={`fees.row.${idx + 1}`}>
                       <TableCell className="text-xs">{fee.date}</TableCell>
-                      <TableCell className="text-xs font-devanagari">
+                      <TableCell className="text-xs">
                         {fee.description}
                       </TableCell>
                       <TableCell>
@@ -554,15 +527,15 @@ export function Dashboard({ onNavigate }: DashboardProps) {
         {/* Legal Documents */}
         <Card className="border-border">
           <CardHeader>
-            <CardTitle className="text-base font-devanagari flex items-center gap-2">
+            <CardTitle className="text-base flex items-center gap-2">
               <FileText className="w-5 h-5 text-primary" />
-              कानूनी दस्तावेज़ / Legal Documents
+              Legal Documents
             </CardTitle>
           </CardHeader>
           <CardContent>
             {activeLoans.length === 0 ? (
-              <p className="text-sm text-muted-foreground font-devanagari">
-                कोई दस्तावेज़ नहीं / No documents
+              <p className="text-sm text-muted-foreground">
+                No documents available
               </p>
             ) : (
               <div className="space-y-2">
@@ -579,8 +552,8 @@ export function Dashboard({ onNavigate }: DashboardProps) {
                       <p className="text-sm font-medium">
                         Promissory Note — {formatCurrency(loan.amount)}
                       </p>
-                      <p className="text-xs text-muted-foreground font-devanagari">
-                        दिनांक: {loan.startDate} • Commission:{" "}
+                      <p className="text-xs text-muted-foreground">
+                        Date: {loan.startDate} • Commission:{" "}
                         {formatCurrency(loan.commissionAmount)}
                       </p>
                     </div>
@@ -594,9 +567,9 @@ export function Dashboard({ onNavigate }: DashboardProps) {
         {/* Legal Action Status */}
         <Card className="border-border">
           <CardHeader>
-            <CardTitle className="text-base font-devanagari flex items-center gap-2">
+            <CardTitle className="text-base flex items-center gap-2">
               <AlertTriangle className="w-5 h-5 text-primary" />
-              कानूनी कार्रवाई स्थिति / Legal Status
+              Legal Status
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -606,27 +579,36 @@ export function Dashboard({ onNavigate }: DashboardProps) {
               <div className="space-y-2">
                 {activeLoans.map((loan) => {
                   const cfg = LEGAL_STATUS_CONFIG[loan.legalStatus];
-                  const other = getUserName(
-                    loan.borrowerId === currentUser.id
-                      ? loan.lenderId
-                      : loan.borrowerId,
-                  );
+                  const isBorrower = loan.borrowerId === currentUser.id;
                   return (
                     <div
                       key={loan.id}
-                      className="flex items-center justify-between p-3 rounded-lg bg-secondary/50"
+                      className="flex items-center justify-between p-3 rounded-lg bg-secondary"
                     >
                       <div>
-                        <p className="text-sm font-medium">{other}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {formatCurrency(loan.amount)}
+                        <p className="text-sm font-medium">
+                          {formatCurrency(loan.amount)} —{" "}
+                          {getUserName(
+                            isBorrower ? loan.lenderId : loan.borrowerId,
+                          )}
                         </p>
+                        <span
+                          className={`text-xs px-2 py-0.5 rounded-full border font-medium ${cfg.color}`}
+                        >
+                          {cfg.label}
+                        </span>
                       </div>
-                      <span
-                        className={`text-xs px-2 py-1 rounded-full border font-medium ${cfg.color}`}
-                      >
-                        {cfg.label}
-                      </span>
+                      {!isBorrower && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="text-xs"
+                          onClick={() => onNavigate(`legal-${loan.id}`)}
+                          data-ocid="legal.edit_button"
+                        >
+                          Manage
+                        </Button>
+                      )}
                     </div>
                   );
                 })}

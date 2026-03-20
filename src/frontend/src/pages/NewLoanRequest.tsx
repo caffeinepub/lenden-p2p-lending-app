@@ -26,15 +26,15 @@ export function NewLoanRequest({ onNavigate }: NewLoanRequestProps) {
     const errs: Record<string, string> = {};
     const amt = Number.parseFloat(amount);
     if (!amount || Number.isNaN(amt) || amt <= 0)
-      errs.amount = "राशि आवश्यक है / Amount required";
-    else if (amt > 100000) errs.amount = "अधिकतम ₹1,00,000 / Max ₹1,00,000";
-    if (!purpose.trim()) errs.purpose = "उद्देश्य आवश्यक है / Purpose required";
+      errs.amount = "Amount is required";
+    else if (amt > 100000) errs.amount = "Maximum loan amount is ₹1,00,000";
+    if (!purpose.trim()) errs.purpose = "Purpose is required";
     const dur = Number.parseInt(duration);
     if (!duration || Number.isNaN(dur) || dur < 1 || dur > 60)
-      errs.duration = "1-60 महीने / 1-60 months";
+      errs.duration = "Duration must be between 1 and 60 months";
     const ir = Number.parseFloat(interestRate);
     if (!interestRate || Number.isNaN(ir) || ir < 0 || ir > 36)
-      errs.interestRate = "0-36% ब्याज / 0-36% interest";
+      errs.interestRate = "Interest rate must be between 0% and 36%";
     return errs;
   };
 
@@ -57,7 +57,7 @@ export function NewLoanRequest({ onNavigate }: NewLoanRequestProps) {
       createdAt: new Date().toISOString().split("T")[0],
     };
     addLoanRequest(req);
-    toast.success("ऋण अनुरोध सफलतापूर्वक जमा हुआ! / Loan request submitted!");
+    toast.success("Loan request submitted successfully!");
     onNavigate("dashboard");
   };
 
@@ -75,7 +75,7 @@ export function NewLoanRequest({ onNavigate }: NewLoanRequestProps) {
         className="flex items-center gap-2 text-muted-foreground hover:text-foreground mb-6 transition-colors"
         data-ocid="newloan.link"
       >
-        <ArrowLeft className="w-4 h-4" /> वापस जाएं / Back
+        <ArrowLeft className="w-4 h-4" /> Back
       </button>
 
       <motion.div
@@ -84,20 +84,18 @@ export function NewLoanRequest({ onNavigate }: NewLoanRequestProps) {
       >
         <Card className="border-border shadow-md">
           <CardHeader>
-            <CardTitle className="text-xl font-devanagari flex items-center gap-2">
+            <CardTitle className="text-xl flex items-center gap-2">
               <IndianRupee className="w-5 h-5 text-primary" />
-              नया ऋण अनुरोध / New Loan Request
+              New Loan Request
             </CardTitle>
             <p className="text-sm text-muted-foreground">
-              अधिकतम ₹1,00,000 / Maximum ₹1,00,000
+              Maximum loan amount: ₹1,00,000
             </p>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-5">
               <div>
-                <Label className="font-devanagari">
-                  ऋण राशि / Loan Amount (₹)
-                </Label>
+                <Label>Loan Amount (₹)</Label>
                 <Input
                   type="number"
                   value={amount}
@@ -117,11 +115,11 @@ export function NewLoanRequest({ onNavigate }: NewLoanRequestProps) {
               </div>
 
               <div>
-                <Label className="font-devanagari">ऋण का उद्देश्य / Purpose</Label>
+                <Label>Purpose of Loan</Label>
                 <Textarea
                   value={purpose}
                   onChange={(e) => setPurpose(e.target.value)}
-                  placeholder="जैसे: व्यापार विस्तार, चिकित्सा खर्च..."
+                  placeholder="e.g. Business expansion, medical expenses..."
                   rows={3}
                   data-ocid="newloan.textarea"
                 />
@@ -137,9 +135,7 @@ export function NewLoanRequest({ onNavigate }: NewLoanRequestProps) {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label className="font-devanagari">
-                    अवधि (महीने) / Duration (Months)
-                  </Label>
+                  <Label>Duration (Months)</Label>
                   <Input
                     type="number"
                     value={duration}
@@ -159,9 +155,7 @@ export function NewLoanRequest({ onNavigate }: NewLoanRequestProps) {
                   )}
                 </div>
                 <div>
-                  <Label className="font-devanagari">
-                    अपेक्षित ब्याज दर (%) / Expected Interest
-                  </Label>
+                  <Label>Expected Interest Rate (%)</Label>
                   <Input
                     type="number"
                     value={interestRate}
@@ -186,29 +180,25 @@ export function NewLoanRequest({ onNavigate }: NewLoanRequestProps) {
               {/* Preview Calculation */}
               {amt > 0 && dur > 0 && (
                 <div className="p-4 bg-secondary rounded-lg space-y-2">
-                  <p className="text-sm font-semibold font-devanagari">
-                    अनुमानित गणना / Estimated Calculation
-                  </p>
+                  <p className="text-sm font-semibold">Estimated Calculation</p>
                   <div className="grid grid-cols-3 gap-3 text-center">
                     <div>
-                      <p className="text-xs text-muted-foreground font-devanagari">
-                        कुल देय
-                      </p>
+                      <p className="text-xs text-muted-foreground">Total Due</p>
                       <p className="font-bold text-primary">
                         ₹{totalDue.toFixed(0)}
                       </p>
                     </div>
                     <div>
-                      <p className="text-xs text-muted-foreground font-devanagari">
-                        मासिक किस्त
+                      <p className="text-xs text-muted-foreground">
+                        Monthly EMI
                       </p>
                       <p className="font-bold text-primary">
                         ₹{monthlyEMI.toFixed(0)}
                       </p>
                     </div>
                     <div>
-                      <p className="text-xs text-muted-foreground font-devanagari">
-                        कुल ब्याज
+                      <p className="text-xs text-muted-foreground">
+                        Total Interest
                       </p>
                       <p className="font-bold text-[oklch(0.55_0.16_50)]">
                         ₹{(totalDue - amt).toFixed(0)}
@@ -223,7 +213,7 @@ export function NewLoanRequest({ onNavigate }: NewLoanRequestProps) {
                 className="w-full"
                 data-ocid="newloan.submit_button"
               >
-                ऋण अनुरोध जमा करें / Submit Loan Request
+                Submit Loan Request
               </Button>
             </form>
           </CardContent>

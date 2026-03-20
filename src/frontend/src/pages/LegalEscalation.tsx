@@ -22,32 +22,32 @@ const LEGAL_STEPS: {
 }[] = [
   {
     status: "normal",
-    label: "सामान्य",
-    sublabel: "Normal",
+    label: "Normal",
+    sublabel: "No issues — loan is on track",
     icon: Shield,
     color: "text-[oklch(0.38_0.09_158)]",
     bg: "bg-[oklch(0.94_0.05_158)]",
   },
   {
     status: "warning",
-    label: "चेतावनी",
-    sublabel: "Warning",
+    label: "Warning",
+    sublabel: "Payment may be delayed",
     icon: AlertTriangle,
     color: "text-[oklch(0.55_0.16_85)]",
     bg: "bg-[oklch(0.96_0.06_85)]",
   },
   {
     status: "legal_pending",
-    label: "कानूनी लंबित",
-    sublabel: "Legal Pending",
+    label: "Legal Pending",
+    sublabel: "Legal notice has been sent",
     icon: Gavel,
     color: "text-[oklch(0.55_0.16_50)]",
     bg: "bg-[oklch(0.96_0.06_50)]",
   },
   {
     status: "action_initiated",
-    label: "कार्रवाई शुरू",
-    sublabel: "Action Initiated",
+    label: "Action Initiated",
+    sublabel: "Legal proceedings have started",
     icon: Gavel,
     color: "text-[oklch(0.55_0.20_27)]",
     bg: "bg-[oklch(0.96_0.06_27)]",
@@ -62,9 +62,7 @@ export function LegalEscalation({ loanId, onNavigate }: LegalEscalationProps) {
   if (!loan) {
     return (
       <main className="max-w-2xl mx-auto px-4 py-8">
-        <p className="text-muted-foreground font-devanagari">
-          ऋण नहीं मिला / Loan not found
-        </p>
+        <p className="text-muted-foreground">Loan not found</p>
       </main>
     );
   }
@@ -73,7 +71,7 @@ export function LegalEscalation({ loanId, onNavigate }: LegalEscalationProps) {
 
   const handleUpdate = (status: LegalStatus) => {
     updateLoan({ ...loan, legalStatus: status });
-    toast.success(`कानूनी स्थिति अपडेट / Legal status updated to ${status}`);
+    toast.success(`Legal status updated to: ${status}`);
     setConfirming(null);
   };
 
@@ -85,7 +83,7 @@ export function LegalEscalation({ loanId, onNavigate }: LegalEscalationProps) {
         className="flex items-center gap-2 text-muted-foreground hover:text-foreground mb-6"
         data-ocid="legal.link"
       >
-        <ArrowLeft className="w-4 h-4" /> वापस
+        <ArrowLeft className="w-4 h-4" /> Back
       </button>
 
       <motion.div
@@ -94,16 +92,12 @@ export function LegalEscalation({ loanId, onNavigate }: LegalEscalationProps) {
       >
         <Card className="border-border shadow-md mb-6">
           <CardHeader>
-            <CardTitle className="text-xl font-devanagari">
-              कानूनी कार्रवाई / Legal Escalation
-            </CardTitle>
+            <CardTitle className="text-xl">Legal Escalation</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
-                <span className="text-muted-foreground font-devanagari">
-                  उधारकर्ता
-                </span>
+                <span className="text-muted-foreground">Borrower</span>
                 <span className="font-semibold">{borrower?.name}</span>
               </div>
               <div className="flex justify-between">
@@ -122,9 +116,7 @@ export function LegalEscalation({ loanId, onNavigate }: LegalEscalationProps) {
           </CardContent>
         </Card>
 
-        <h2 className="text-lg font-bold font-devanagari mb-4">
-          स्थिति बदलें / Change Status
-        </h2>
+        <h2 className="text-lg font-bold mb-4">Change Legal Status</h2>
         <div className="space-y-3">
           {LEGAL_STEPS.map((step, idx) => {
             const isActive = loan.legalStatus === step.status;
@@ -148,9 +140,7 @@ export function LegalEscalation({ loanId, onNavigate }: LegalEscalationProps) {
                           <step.icon className={`w-5 h-5 ${step.color}`} />
                         </div>
                         <div>
-                          <p
-                            className={`font-semibold font-devanagari ${step.color}`}
-                          >
+                          <p className={`font-semibold ${step.color}`}>
                             {step.label}
                           </p>
                           <p className="text-xs text-muted-foreground">
@@ -160,7 +150,7 @@ export function LegalEscalation({ loanId, onNavigate }: LegalEscalationProps) {
                       </div>
                       {isActive ? (
                         <span className="text-xs bg-secondary text-primary px-3 py-1 rounded-full font-medium">
-                          वर्तमान / Current
+                          Current
                         </span>
                       ) : confirming === step.status ? (
                         <div className="flex gap-2">
@@ -170,7 +160,7 @@ export function LegalEscalation({ loanId, onNavigate }: LegalEscalationProps) {
                             onClick={() => handleUpdate(step.status)}
                             data-ocid={`legal.confirm_button.${idx + 1}`}
                           >
-                            पुष्टि करें
+                            Confirm
                           </Button>
                           <Button
                             size="sm"
@@ -179,7 +169,7 @@ export function LegalEscalation({ loanId, onNavigate }: LegalEscalationProps) {
                             onClick={() => setConfirming(null)}
                             data-ocid={`legal.cancel_button.${idx + 1}`}
                           >
-                            रद्द करें
+                            Cancel
                           </Button>
                         </div>
                       ) : (
@@ -190,7 +180,7 @@ export function LegalEscalation({ loanId, onNavigate }: LegalEscalationProps) {
                           onClick={() => setConfirming(step.status)}
                           data-ocid={`legal.edit_button.${idx + 1}`}
                         >
-                          चुनें / Select
+                          Select
                         </Button>
                       )}
                     </div>

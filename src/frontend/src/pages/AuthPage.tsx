@@ -23,9 +23,9 @@ export function AuthPage({ onNavigate }: AuthPageProps) {
 
   const validate = () => {
     const errs: Record<string, string> = {};
-    if (!isLogin && !name.trim()) errs.name = "नाम आवश्यक है / Name is required";
+    if (!isLogin && !name.trim()) errs.name = "Name is required";
     if (!phone.trim() || !/^\d{10}$/.test(phone))
-      errs.phone = "10 अंकों का फोन नंबर / 10-digit phone required";
+      errs.phone = "A 10-digit phone number is required";
     return errs;
   };
 
@@ -41,22 +41,22 @@ export function AuthPage({ onNavigate }: AuthPageProps) {
     if (isLogin) {
       const user = users.find((u) => u.phone === phone);
       if (!user) {
-        setErrors({ phone: "उपयोगकर्ता नहीं मिला / User not found" });
+        setErrors({ phone: "User not found" });
         return;
       }
       login(user);
-      toast.success(`स्वागत है ${user.name}!`);
+      toast.success(`Welcome back, ${user.name}!`);
       onNavigate("dashboard");
     } else {
       const existing = users.find((u) => u.phone === phone);
       if (existing) {
-        setErrors({ phone: "फोन पहले से पंजीकृत / Phone already registered" });
+        setErrors({ phone: "This phone number is already registered" });
         return;
       }
       const user = register({ name: name.trim(), phone, role });
       login(user);
       toast.success(
-        `पंजीकरण सफल! प्रवेश शुल्क ₹${PLATFORM_ENTRY_FEE} लिया गया। / Registration successful! Entry fee ₹${PLATFORM_ENTRY_FEE} charged.`,
+        `Registration successful! Entry fee ₹${PLATFORM_ENTRY_FEE} charged.`,
       );
       onNavigate("dashboard");
     }
@@ -74,11 +74,11 @@ export function AuthPage({ onNavigate }: AuthPageProps) {
             <div className="w-14 h-14 bg-secondary rounded-full flex items-center justify-center mx-auto mb-3">
               <Shield className="w-8 h-8 text-primary" />
             </div>
-            <CardTitle className="text-2xl font-devanagari">
-              {isLogin ? "लॉग इन करें" : "पंजीकरण करें"}
+            <CardTitle className="text-2xl">
+              {isLogin ? "Sign In" : "Create Account"}
             </CardTitle>
             <p className="text-sm text-muted-foreground">
-              {isLogin ? "Sign In" : "Register"}
+              {isLogin ? "Welcome back" : "Join RinaDost today"}
             </p>
           </CardHeader>
           <CardContent>
@@ -94,14 +94,10 @@ export function AuthPage({ onNavigate }: AuthPageProps) {
                   <IndianRupee className="w-4 h-4 text-primary" />
                 </div>
                 <div>
-                  <p className="text-sm font-bold text-primary font-devanagari">
-                    प्रवेश शुल्क / Entry Fee: ₹{PLATFORM_ENTRY_FEE}
+                  <p className="text-sm font-bold text-primary">
+                    Entry Fee: ₹{PLATFORM_ENTRY_FEE}
                   </p>
                   <p className="text-xs text-muted-foreground mt-0.5">
-                    पंजीकरण पर एकमुश्त ₹{PLATFORM_ENTRY_FEE} प्लेटफ़ॉर्म शुल्क लिया जाता
-                    है।
-                  </p>
-                  <p className="text-xs text-muted-foreground">
                     A one-time ₹{PLATFORM_ENTRY_FEE} platform entry fee is
                     charged on registration.
                   </p>
@@ -112,14 +108,12 @@ export function AuthPage({ onNavigate }: AuthPageProps) {
             <form onSubmit={handleSubmit} className="space-y-4">
               {!isLogin && (
                 <div>
-                  <Label htmlFor="name" className="font-devanagari">
-                    पूरा नाम / Full Name
-                  </Label>
+                  <Label htmlFor="name">Full Name</Label>
                   <Input
                     id="name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    placeholder="जैसे: रमेश कुमार"
+                    placeholder="e.g. Ramesh Kumar"
                     data-ocid="auth.input"
                   />
                   {errors.name && (
@@ -134,9 +128,7 @@ export function AuthPage({ onNavigate }: AuthPageProps) {
               )}
 
               <div>
-                <Label htmlFor="phone" className="font-devanagari">
-                  फोन नंबर / Phone Number
-                </Label>
+                <Label htmlFor="phone">Phone Number</Label>
                 <Input
                   id="phone"
                   value={phone}
@@ -157,7 +149,7 @@ export function AuthPage({ onNavigate }: AuthPageProps) {
 
               {!isLogin && (
                 <div>
-                  <Label className="font-devanagari">भूमिका / Role</Label>
+                  <Label>Role</Label>
                   <div className="grid grid-cols-3 gap-2 mt-2">
                     {(["lender", "borrower", "both"] as UserRole[]).map((r) => (
                       <button
@@ -172,10 +164,10 @@ export function AuthPage({ onNavigate }: AuthPageProps) {
                         }`}
                       >
                         {r === "lender"
-                          ? "ऋणदाता"
+                          ? "Lender"
                           : r === "borrower"
-                            ? "उधारकर्ता"
-                            : "दोनों"}
+                            ? "Borrower"
+                            : "Both"}
                       </button>
                     ))}
                   </div>
@@ -187,9 +179,7 @@ export function AuthPage({ onNavigate }: AuthPageProps) {
                 className="w-full"
                 data-ocid="auth.submit_button"
               >
-                {isLogin
-                  ? "लॉग इन / Sign In"
-                  : `पंजीकरण (₹${PLATFORM_ENTRY_FEE} शुल्क) / Register`}
+                {isLogin ? "Sign In" : `Register (₹${PLATFORM_ENTRY_FEE} fee)`}
               </Button>
             </form>
 
@@ -200,9 +190,11 @@ export function AuthPage({ onNavigate }: AuthPageProps) {
                   setIsLogin(!isLogin);
                   setErrors({});
                 }}
-                className="text-sm text-primary hover:underline font-devanagari"
+                className="text-sm text-primary hover:underline"
               >
-                {isLogin ? "नया खाता बनाएं? Register" : "पहले से खाता है? Login"}
+                {isLogin
+                  ? "New here? Create an account"
+                  : "Already have an account? Sign in"}
               </button>
             </div>
 
