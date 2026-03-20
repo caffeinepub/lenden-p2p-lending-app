@@ -5,11 +5,13 @@ import { Navbar } from "./components/Navbar";
 import { AdminWithdrawal } from "./pages/AdminWithdrawal";
 import { ApproveLoan } from "./pages/ApproveLoan";
 import { AuthPage } from "./pages/AuthPage";
+import { CreditScorePage } from "./pages/CreditScorePage";
 import { Dashboard } from "./pages/Dashboard";
 import { LandingPage } from "./pages/LandingPage";
 import { LegalDocuments } from "./pages/LegalDocuments";
 import { LegalEscalation } from "./pages/LegalEscalation";
 import { MakeRepayment } from "./pages/MakeRepayment";
+import { MembershipPage } from "./pages/MembershipPage";
 import { NewLoanRequest } from "./pages/NewLoanRequest";
 import { PromissoryNote } from "./pages/PromissoryNote";
 import { AppProvider, useApp } from "./store/appStore";
@@ -23,7 +25,6 @@ function AppContent() {
     window.scrollTo(0, 0);
   };
 
-  // Parse parameterized pages
   let loanId = "";
   if (page.startsWith("promissory-")) loanId = page.replace("promissory-", "");
   if (page.startsWith("legal-")) loanId = page.replace("legal-", "");
@@ -53,6 +54,10 @@ function AppContent() {
         return <LegalDocuments onNavigate={navigate} />;
       case page === "admin-withdrawal":
         return <AdminWithdrawal onNavigate={navigate} />;
+      case page === "membership":
+        return <MembershipPage onNavigate={navigate} />;
+      case page === "credit-score":
+        return <CreditScorePage onNavigate={navigate} />;
       case page.startsWith("promissory-"):
         return <PromissoryNote loanId={loanId} onNavigate={navigate} />;
       case page.startsWith("legal-"):

@@ -10,6 +10,8 @@ import {
   type FeeRecord,
   type Loan,
   type LoanRequest,
+  MEMBERSHIP_MONTHLY_PRICE,
+  MEMBERSHIP_YEARLY_PRICE,
   PLATFORM_ENTRY_FEE,
   PLATFORM_EXIT_FEE,
   type Repayment,
@@ -20,10 +22,38 @@ import {
 } from "../types";
 
 const SEED_USERS: User[] = [
-  { id: "admin1", name: "Barkat (Admin)", phone: "0000000000", role: "admin" },
-  { id: "u1", name: "Ramesh Kumar", phone: "9876543210", role: "lender" },
-  { id: "u2", name: "Suresh Sharma", phone: "9876543211", role: "borrower" },
-  { id: "u3", name: "Priya Gupta", phone: "9876543212", role: "both" },
+  {
+    id: "admin1",
+    name: "Barkat (Admin)",
+    phone: "0000000000",
+    role: "admin",
+    isPremium: false,
+    creditScore: 900,
+  },
+  {
+    id: "u1",
+    name: "Ramesh Kumar",
+    phone: "9876543210",
+    role: "lender",
+    isPremium: false,
+    creditScore: 750,
+  },
+  {
+    id: "u2",
+    name: "Suresh Sharma",
+    phone: "9876543211",
+    role: "borrower",
+    isPremium: false,
+    creditScore: 620,
+  },
+  {
+    id: "u3",
+    name: "Priya Gupta",
+    phone: "9876543212",
+    role: "both",
+    isPremium: false,
+    creditScore: 700,
+  },
 ];
 
 const SEED_LOANS: Loan[] = [
@@ -113,7 +143,6 @@ const SEED_REQUESTS: LoanRequest[] = [
   },
 ];
 
-// Seed fee records reflecting the 3 existing loans + 3 entry fees for seed users
 const SEED_FEE_RECORDS: FeeRecord[] = [
   {
     id: "f1",
@@ -195,10 +224,18 @@ interface AppState {
   removeLoanRequest: (id: string) => void;
   addFeeRecord: (record: FeeRecord) => void;
   addWithdrawal: (w: WithdrawalRecord) => void;
+  purchaseMembership: (
+    userId: string,
+    plan: "monthly" | "yearly",
+    utr: string,
+  ) => void;
+  computeCreditScore: (userId: string) => number;
+  updateUserCreditScore: (userId: string) => void;
   // computed admin stats
   totalCommission: number;
   totalEntryFees: number;
   totalExitFees: number;
+  totalMembershipFees: number;
   totalAdminEarnings: number;
 }
 
@@ -253,9 +290,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const logout = () => setCurrentUser(null);
 
   const register = (data: Omit<User, "id">, utr?: string) => {
-    const user: User = { ...data, id: `u${Date.now()}` };
+    const user: User = {
+      ...data,
+      id: `u${Date.now()}`,
+      isPremium: false,
+      creditScore: 600,
+    };
     setUsers((prev) => [...prev, user]);
-    // Record ₹1 entry fee with optional UTR
     const utrNote = utr ? ` | UTR: ${utr}` : "";
     const entryFee: FeeRecord = {
       id: `fee_entry_${Date.now()}`,
@@ -271,7 +312,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const addLoan = (loan: Loan) => {
     setLoans((prev) => [...prev, loan]);
-    // Record 7% commission
     const commission: FeeRecord = {
       id: `fee_comm_${Date.now()}`,
       type: "commission",
@@ -302,6 +342,83 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const addWithdrawal = (w: WithdrawalRecord) =>
     setWithdrawals((prev) => [...prev, w]);
 
+  const purchaseMembership = (
+    userId: string,
+    plan: "monthly" | "yearly",
+    utr: string,
+  ) => {
+    const price =
+      plan === "monthly" ? MEMBERSHIP_MONTHLY_PRICE : MEMBERSHIP_YEARLY_PRICE;
+    const expiryDate = new Date();
+    expiryDate.setDate(expiryDate.getDate() + (plan === "monthly" ? 30 : 365));
+
+    setUsers((prev) =>
+      prev.map((u) =>
+        u.id === userId
+          ? {
+              ...u,
+              isPremium: true,
+              membershipExpiry: expiryDate.toISOString().split("T")[0],
+            }
+          : u,
+      ),
+    );
+
+    // Update currentUser if it's the same user
+    setCurrentUser((prev) =>
+      prev && prev.id === userId
+        ? {
+            ...prev,
+            isPremium: true,
+            membershipExpiry: expiryDate.toISOString().split("T")[0],
+          }
+        : prev,
+    );
+
+    const membershipFee: FeeRecord = {
+      id: `fee_mem_${Date.now()}`,
+      type: "membership",
+      amount: price,
+      userId,
+      date: new Date().toISOString().split("T")[0],
+      description: `सदस्यता शुल्क / Membership Fee — ${plan === "monthly" ? "Monthly" : "Yearly"} | UTR: ${utr}`,
+    };
+    setFeeRecords((prev) => [...prev, membershipFee]);
+  };
+
+  const computeCreditScore = (userId: string): number => {
+    const userLoans = loans.filter(
+      (l) => l.borrowerId === userId || l.lenderId === userId,
+    );
+    const completedLoans = userLoans.filter(
+      (l) => l.status === "completed",
+    ).length;
+    const userRepayments = repayments.filter((r) =>
+      userLoans.some((l) => l.id === r.loanId),
+    ).length;
+    const legalIssues = userLoans.filter(
+      (l) =>
+        l.legalStatus === "legal_pending" ||
+        l.legalStatus === "action_initiated",
+    ).length;
+
+    let score = 600;
+    score += completedLoans * 10;
+    score += userRepayments * 5;
+    score -= legalIssues * 20;
+    return Math.min(900, Math.max(300, score));
+  };
+
+  const updateUserCreditScore = (userId: string) => {
+    const score = computeCreditScore(userId);
+    setUsers((prev) =>
+      prev.map((u) => (u.id === userId ? { ...u, creditScore: score } : u)),
+    );
+    setCurrentUser((prev) =>
+      prev && prev.id === userId ? { ...prev, creditScore: score } : prev,
+    );
+  };
+
   // Computed admin totals
   const totalCommission = feeRecords
     .filter((f) => f.type === "commission")
@@ -312,7 +429,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const totalExitFees = feeRecords
     .filter((f) => f.type === "exit")
     .reduce((s, f) => s + f.amount, 0);
-  const totalAdminEarnings = totalCommission + totalEntryFees + totalExitFees;
+  const totalMembershipFees = feeRecords
+    .filter((f) => f.type === "membership")
+    .reduce((s, f) => s + f.amount, 0);
+  const totalAdminEarnings =
+    totalCommission + totalEntryFees + totalExitFees + totalMembershipFees;
 
   const value: AppState = {
     currentUser,
@@ -332,9 +453,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
     removeLoanRequest,
     addFeeRecord,
     addWithdrawal,
+    purchaseMembership,
+    computeCreditScore,
+    updateUserCreditScore,
     totalCommission,
     totalEntryFees,
     totalExitFees,
+    totalMembershipFees,
     totalAdminEarnings,
   };
 
@@ -346,3 +471,5 @@ export function useApp(): AppState {
   if (!ctx) throw new Error("useApp must be used inside AppProvider");
   return ctx;
 }
+
+export { computeNetAmount, PLATFORM_EXIT_FEE };

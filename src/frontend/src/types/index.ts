@@ -5,6 +5,9 @@ export interface User {
   name: string;
   phone: string;
   role: UserRole;
+  isPremium?: boolean;
+  membershipExpiry?: string; // ISO date string
+  creditScore?: number; // 300-900
 }
 
 export type LoanStatus = "pending" | "active" | "completed" | "rejected";
@@ -52,7 +55,12 @@ export interface LoanRequest {
   utr?: string;
 }
 
-export type FeeType = "entry" | "exit" | "commission" | "withdrawal";
+export type FeeType =
+  | "entry"
+  | "exit"
+  | "commission"
+  | "withdrawal"
+  | "membership";
 
 export interface FeeRecord {
   id: string;
@@ -77,6 +85,8 @@ export interface WithdrawalRecord {
 export const PLATFORM_ENTRY_FEE = 1; // ₹1 on registration
 export const PLATFORM_EXIT_FEE = 1; // ₹1 on loan closure
 export const PLATFORM_COMMISSION_RATE = 0.07; // 7% of loan principal
+export const MEMBERSHIP_MONTHLY_PRICE = 99; // ₹99/month
+export const MEMBERSHIP_YEARLY_PRICE = 499; // ₹499/year
 
 // Admin phone number - only this number gets admin access
 export const ADMIN_PHONE = "barkat6y"; // Admin can login with this phone
@@ -106,4 +116,34 @@ export function formatCurrency(amount: number): string {
     currency: "INR",
     maximumFractionDigits: 0,
   }).format(amount);
+}
+
+export function getCreditScoreLabel(score: number): {
+  label: string;
+  color: string;
+  bgColor: string;
+} {
+  if (score >= 750)
+    return {
+      label: "Excellent",
+      color: "oklch(0.45 0.12 158)",
+      bgColor: "oklch(0.94 0.05 158)",
+    };
+  if (score >= 650)
+    return {
+      label: "Good",
+      color: "oklch(0.55 0.14 120)",
+      bgColor: "oklch(0.95 0.05 120)",
+    };
+  if (score >= 500)
+    return {
+      label: "Fair",
+      color: "oklch(0.60 0.16 70)",
+      bgColor: "oklch(0.96 0.06 70)",
+    };
+  return {
+    label: "Poor",
+    color: "oklch(0.55 0.20 27)",
+    bgColor: "oklch(0.96 0.06 27)",
+  };
 }

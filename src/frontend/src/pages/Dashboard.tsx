@@ -12,10 +12,13 @@ import {
 } from "@/components/ui/table";
 import {
   AlertTriangle,
+  BarChart3,
   CreditCard,
+  Crown,
   FileText,
   IndianRupee,
   Plus,
+  Star,
   TrendingUp,
   Wallet,
 } from "lucide-react";
@@ -28,6 +31,7 @@ import {
   computeMonthlyInstallment,
   computeTotalDue,
   formatCurrency,
+  getCreditScoreLabel,
 } from "../types";
 
 interface DashboardProps {
@@ -101,10 +105,12 @@ export function Dashboard({ onNavigate }: DashboardProps) {
   const getUserName = (id: string) =>
     users.find((u) => u.id === id)?.name ?? "Unknown";
 
-  // Recent fee records (last 5) — only used for admin
   const recentFees = [...feeRecords]
     .sort((a, b) => b.date.localeCompare(a.date))
     .slice(0, 5);
+
+  const creditScore = currentUser.creditScore ?? 600;
+  const scoreInfo = getCreditScoreLabel(creditScore);
 
   return (
     <main className="max-w-7xl mx-auto px-4 py-8">
@@ -114,10 +120,32 @@ export function Dashboard({ onNavigate }: DashboardProps) {
         animate={{ opacity: 1, y: 0 }}
         className="mb-8"
       >
-        <h1 className="text-2xl font-bold">Loan Dashboard</h1>
-        <p className="text-muted-foreground mt-1">
-          Welcome, {currentUser.name} {isAdmin ? "👑" : "👋"}
-        </p>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <div className="flex items-center gap-2 flex-wrap">
+              <h1 className="text-2xl font-bold">Loan Dashboard</h1>
+              {!isAdmin && currentUser.isPremium && (
+                <Badge className="bg-[oklch(0.88_0.10_85)] text-[oklch(0.45_0.15_70)] border-0 flex items-center gap-1">
+                  <Star className="w-3 h-3" /> Premium ⭐
+                </Badge>
+              )}
+            </div>
+            <p className="text-muted-foreground mt-1">
+              Welcome, {currentUser.name} {isAdmin ? "👑" : "👋"}
+            </p>
+          </div>
+          {!isAdmin && !currentUser.isPremium && (
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => onNavigate("membership")}
+              className="border-[oklch(0.80_0.10_70)] text-[oklch(0.50_0.14_70)] hover:bg-[oklch(0.96_0.06_85)]"
+              data-ocid="dashboard.secondary_button"
+            >
+              <Crown className="w-4 h-4 mr-1" /> Upgrade to Premium
+            </Button>
+          )}
+        </div>
       </motion.div>
 
       {/* KPI Cards */}
@@ -215,6 +243,26 @@ export function Dashboard({ onNavigate }: DashboardProps) {
         >
           <FileText className="w-4 h-4 mr-2" /> Legal Documents
         </Button>
+        {!isAdmin && (
+          <Button
+            variant="outline"
+            onClick={() => onNavigate("credit-score")}
+            className="border-primary/40 text-primary hover:bg-primary/5"
+            data-ocid="dashboard.secondary_button"
+          >
+            <BarChart3 className="w-4 h-4 mr-2" /> My Credit Score
+          </Button>
+        )}
+        {!isAdmin && (
+          <Button
+            variant="outline"
+            onClick={() => onNavigate("membership")}
+            className="border-[oklch(0.80_0.10_70)] text-[oklch(0.50_0.14_70)] hover:bg-[oklch(0.96_0.06_85)]"
+            data-ocid="dashboard.secondary_button"
+          >
+            <Crown className="w-4 h-4 mr-2" /> Premium Membership
+          </Button>
+        )}
         {isAdmin && (
           <Button
             variant="outline"
@@ -293,7 +341,6 @@ export function Dashboard({ onNavigate }: DashboardProps) {
                             {formatCurrency(loan.amount)}
                           </span>
                         </div>
-                        {/* Net amount to borrower */}
                         {isBorrower && !isAdmin && (
                           <div className="flex justify-between text-xs">
                             <span className="text-muted-foreground">
@@ -446,7 +493,6 @@ export function Dashboard({ onNavigate }: DashboardProps) {
             </Button>
           </div>
 
-          {/* Summary KPI row */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
             {[
               {
@@ -505,7 +551,6 @@ export function Dashboard({ onNavigate }: DashboardProps) {
             ))}
           </div>
 
-          {/* Recent fee log */}
           <Card className="border-border">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm">Recent Fee Transactions</CardTitle>
@@ -545,14 +590,18 @@ export function Dashboard({ onNavigate }: DashboardProps) {
                                 ? "bg-[oklch(0.96_0.06_50)] text-[oklch(0.50_0.14_50)]"
                                 : fee.type === "entry"
                                   ? "bg-[oklch(0.94_0.05_158)] text-[oklch(0.38_0.09_158)]"
-                                  : "bg-[oklch(0.96_0.06_85)] text-[oklch(0.55_0.14_85)]"
+                                  : fee.type === "membership"
+                                    ? "bg-[oklch(0.96_0.06_85)] text-[oklch(0.50_0.14_70)]"
+                                    : "bg-[oklch(0.96_0.06_85)] text-[oklch(0.55_0.14_85)]"
                             }`}
                           >
                             {fee.type === "commission"
                               ? "Commission"
                               : fee.type === "entry"
                                 ? "Entry"
-                                : "Exit"}
+                                : fee.type === "membership"
+                                  ? "Membership"
+                                  : "Exit"}
                           </span>
                         </TableCell>
                         <TableCell className="text-xs font-bold text-primary">
@@ -569,7 +618,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
       )}
 
       {/* Bottom Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Legal Documents */}
         <Card className="border-border">
           <CardHeader>
@@ -673,6 +722,64 @@ export function Dashboard({ onNavigate }: DashboardProps) {
             )}
           </CardContent>
         </Card>
+
+        {/* Credit Score Card */}
+        {!isAdmin && (
+          <Card className="border-border">
+            <CardHeader>
+              <CardTitle className="text-base flex items-center gap-2">
+                <BarChart3 className="w-5 h-5 text-primary" />
+                Credit Score / क्रेडिट स्कोर
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center gap-3 mb-4">
+                <div
+                  className="w-16 h-16 rounded-2xl flex items-center justify-center font-bold text-xl"
+                  style={{
+                    background: scoreInfo.bgColor,
+                    color: scoreInfo.color,
+                  }}
+                >
+                  {creditScore}
+                </div>
+                <div>
+                  <p
+                    className="text-sm font-bold"
+                    style={{ color: scoreInfo.color }}
+                  >
+                    {scoreInfo.label}
+                  </p>
+                  <p className="text-xs text-muted-foreground">out of 900</p>
+                  <span
+                    className="text-xs px-2 py-0.5 rounded-full font-medium"
+                    style={{
+                      background: scoreInfo.bgColor,
+                      color: scoreInfo.color,
+                    }}
+                  >
+                    {scoreInfo.label === "Excellent"
+                      ? "उत्कृष्ट"
+                      : scoreInfo.label === "Good"
+                        ? "अच्छा"
+                        : scoreInfo.label === "Fair"
+                          ? "ठीक"
+                          : "खराब"}
+                  </span>
+                </div>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full border-primary/40 text-primary hover:bg-primary/5"
+                onClick={() => onNavigate("credit-score")}
+                data-ocid="credit_score.link"
+              >
+                <BarChart3 className="w-4 h-4 mr-2" /> View Full Report
+              </Button>
+            </CardContent>
+          </Card>
+        )}
       </div>
     </main>
   );
