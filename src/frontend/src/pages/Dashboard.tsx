@@ -213,7 +213,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
 
       {/* Quick Actions */}
       <div className="flex flex-wrap gap-3 mb-8">
-        {(currentUser.role === "borrower" || currentUser.role === "both") && (
+        {!isAdmin && (
           <Button
             onClick={() => onNavigate("new-loan")}
             data-ocid="dashboard.primary_button"
@@ -221,17 +221,13 @@ export function Dashboard({ onNavigate }: DashboardProps) {
             <Plus className="w-4 h-4 mr-2" /> Request a Loan
           </Button>
         )}
-        {(currentUser.role === "lender" ||
-          currentUser.role === "both" ||
-          isAdmin) && (
-          <Button
-            variant="outline"
-            onClick={() => onNavigate("loan-requests")}
-            data-ocid="dashboard.secondary_button"
-          >
-            Approve Loans
-          </Button>
-        )}
+        <Button
+          variant="outline"
+          onClick={() => onNavigate("loan-requests")}
+          data-ocid="dashboard.secondary_button"
+        >
+          Approve Loans
+        </Button>
         {!isAdmin && (
           <Button
             variant="outline"

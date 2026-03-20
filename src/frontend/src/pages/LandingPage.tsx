@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import {
   ArrowRight,
   BarChart3,
+  BookOpen,
   CheckCircle2,
   ChevronRight,
   Crown,
@@ -378,6 +379,16 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
                   data-ocid="hero.secondary_button"
                 >
                   Loan Do
+                </Button>
+                <Button
+                  size="lg"
+                  variant="ghost"
+                  className="text-base px-6 font-bold rounded-full border border-white/30 text-white/80 hover:text-white hover:bg-white/10"
+                  onClick={() => onNavigate("tutorial")}
+                  data-ocid="hero.link"
+                >
+                  <BookOpen className="w-4 h-4 mr-2" />
+                  Kaise Use Karein?
                 </Button>
               </motion.div>
 

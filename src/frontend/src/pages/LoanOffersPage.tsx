@@ -131,6 +131,7 @@ const brandOffers = [
     iconBg: "bg-blue-100",
     iconColor: "text-blue-600",
     applied: 89,
+    fastApproval: true,
   },
   {
     icon: Gem,
@@ -146,6 +147,7 @@ const brandOffers = [
     iconBg: "bg-yellow-100",
     iconColor: "text-yellow-600",
     applied: 123,
+    fastApproval: true,
   },
   {
     icon: Building2,
@@ -161,6 +163,7 @@ const brandOffers = [
     iconBg: "bg-red-100",
     iconColor: "text-red-600",
     applied: 47,
+    fastApproval: true,
   },
   {
     icon: TrendUp,
@@ -176,6 +179,7 @@ const brandOffers = [
     iconBg: "bg-indigo-100",
     iconColor: "text-indigo-600",
     applied: 201,
+    fastApproval: true,
   },
   {
     icon: ShoppingBag,
@@ -195,6 +199,42 @@ const brandOffers = [
     iconBg: "bg-green-100",
     iconColor: "text-green-600",
     applied: 167,
+  },
+  {
+    icon: ZapIcon,
+    title: "mPocket",
+    partner: "Instant Cash for Students",
+    amount: "₹1,000 – ₹30,000",
+    rate: "1-3% per month",
+    badge: "⚡ Fast Approval",
+    badgeColor: "bg-purple-100 text-purple-700 border-purple-200",
+    features: ["Instant approval", "No documents needed", "Student-friendly"],
+    accent: "border-purple-300",
+    gradient: "from-purple-50 to-indigo-50",
+    iconBg: "bg-purple-100",
+    iconColor: "text-purple-600",
+    applied: 312,
+    fastApproval: true,
+  },
+  {
+    icon: ShieldIcon,
+    title: "MoneyView",
+    partner: "Personal Loan in 24 Hours",
+    amount: "₹10,000 – ₹5,00,000",
+    rate: "From 1.33% per month",
+    badge: "⚡ Fast Approval",
+    badgeColor: "bg-blue-100 text-blue-700 border-blue-200",
+    features: [
+      "Quick disbursal in 24 hrs",
+      "Minimal documents",
+      "Free credit score check",
+    ],
+    accent: "border-blue-400",
+    gradient: "from-blue-50 to-cyan-50",
+    iconBg: "bg-blue-100",
+    iconColor: "text-blue-600",
+    applied: 289,
+    fastApproval: true,
   },
 ];
 
@@ -580,6 +620,18 @@ export function LoanOffersPage({ onNavigate }: LoanOffersPageProps) {
                         </li>
                       ))}
                     </ul>
+                    {"fastApproval" in offer &&
+                      (offer as { fastApproval?: boolean }).fastApproval && (
+                        <div
+                          className="inline-flex items-center gap-1 text-[10px] font-black px-2.5 py-0.5 rounded-full"
+                          style={{
+                            background: "oklch(0.82 0.18 75)",
+                            color: "oklch(0.20 0.06 42)",
+                          }}
+                        >
+                          ⚡ Fast Approval
+                        </div>
+                      )}
                     <div className="flex items-center justify-between pt-1">
                       <span className="text-[10px] text-muted-foreground">
                         🔥 {offer.applied} applied today

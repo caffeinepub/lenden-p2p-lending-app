@@ -1,5 +1,13 @@
 import { Button } from "@/components/ui/button";
-import { LogOut, Megaphone, Menu, Phone, Shield, X } from "lucide-react";
+import {
+  BookOpen,
+  LogOut,
+  Megaphone,
+  Menu,
+  Phone,
+  Shield,
+  X,
+} from "lucide-react";
 import { useState } from "react";
 import { useApp } from "../store/appStore";
 
@@ -22,6 +30,7 @@ export function Navbar({ currentPage, onNavigate }: NavbarProps) {
   ];
 
   const publicLinks = [
+    { label: "Guide", page: "tutorial", icon: BookOpen },
     { label: "Support", page: "support", icon: Phone },
     { label: "Advertise", page: "advertise", icon: Megaphone },
   ];

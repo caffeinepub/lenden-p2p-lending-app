@@ -17,6 +17,7 @@ import { MembershipPage } from "./pages/MembershipPage";
 import { NewLoanRequest } from "./pages/NewLoanRequest";
 import { PromissoryNote } from "./pages/PromissoryNote";
 import { SupportPage } from "./pages/SupportPage";
+import { TutorialPage } from "./pages/TutorialPage";
 import { AppProvider, useApp } from "./store/appStore";
 
 function AppContent() {
@@ -33,9 +34,10 @@ function AppContent() {
   if (page.startsWith("legal-")) loanId = page.replace("legal-", "");
 
   const renderPage = () => {
-    // Support and Advertise pages accessible without login
+    // Public pages accessible without login
     if (page === "support") return <SupportPage onNavigate={navigate} />;
     if (page === "advertise") return <AdvertisePage onNavigate={navigate} />;
+    if (page === "tutorial") return <TutorialPage onNavigate={navigate} />;
 
     if (!currentUser && page !== "landing" && page !== "auth") {
       return <LandingPage onNavigate={navigate} />;

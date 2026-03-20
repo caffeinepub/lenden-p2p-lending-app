@@ -22,7 +22,6 @@ export function AuthPage({ onNavigate }: AuthPageProps) {
   const [isLogin, setIsLogin] = useState(true);
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
-  const [role, setRole] = useState<UserRole>("both");
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   // Payment gate state
@@ -69,7 +68,7 @@ export function AuthPage({ onNavigate }: AuthPageProps) {
         return;
       }
       // Save form data and move to payment step
-      setPendingData({ name: name.trim(), phone, role });
+      setPendingData({ name: name.trim(), phone, role: "both" });
       setStep(2);
     }
   };
@@ -194,31 +193,11 @@ export function AuthPage({ onNavigate }: AuthPageProps) {
                     </div>
 
                     {!isLogin && (
-                      <div>
-                        <Label>Role</Label>
-                        <div className="grid grid-cols-3 gap-2 mt-2">
-                          {(["lender", "borrower", "both"] as UserRole[]).map(
-                            (r) => (
-                              <button
-                                key={r}
-                                type="button"
-                                onClick={() => setRole(r)}
-                                data-ocid="auth.radio"
-                                className={`py-2 px-3 rounded-lg text-sm border transition-colors font-medium ${
-                                  role === r
-                                    ? "bg-primary text-primary-foreground border-primary"
-                                    : "bg-card border-border text-muted-foreground hover:border-primary"
-                                }`}
-                              >
-                                {r === "lender"
-                                  ? "Lender"
-                                  : r === "borrower"
-                                    ? "Borrower"
-                                    : "Both"}
-                              </button>
-                            ),
-                          )}
-                        </div>
+                      <div className="p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
+                        <p className="text-sm text-green-700 dark:text-green-400 font-medium">
+                          ✅ Aap loan le bhi sakte hain aur de bhi sakte hain --
+                          dono options available hain!
+                        </p>
                       </div>
                     )}
 
