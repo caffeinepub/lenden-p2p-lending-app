@@ -13,19 +13,25 @@ import {
 import {
   AlertTriangle,
   BarChart3,
+  Bell,
+  BookOpen,
+  Bot,
   Calculator,
   CheckCircle2,
   CreditCard,
   Crown,
   FileText,
+  History,
   IndianRupee,
   Plus,
   Star,
   Tag,
   TrendingUp,
+  Users,
   Wallet,
 } from "lucide-react";
 import { motion } from "motion/react";
+import { toast } from "sonner";
 import { AdCarousel } from "../components/AdCarousel";
 import { useApp } from "../store/appStore";
 import {
@@ -308,7 +314,115 @@ export function Dashboard({ onNavigate }: DashboardProps) {
             <Calculator className="w-4 h-4 mr-2" /> EMI Calculator
           </Button>
         )}
+        {!isAdmin && (
+          <Button
+            variant="outline"
+            onClick={() => onNavigate("loan-history")}
+            className="border-blue-300 text-blue-700 hover:bg-blue-50"
+            data-ocid="dashboard.secondary_button"
+          >
+            <History className="w-4 h-4 mr-2" /> Loan History
+          </Button>
+        )}
+        {!isAdmin && (
+          <Button
+            variant="outline"
+            onClick={() => onNavigate("ai-assistant")}
+            className="border-purple-300 text-purple-700 hover:bg-purple-50"
+            data-ocid="dashboard.secondary_button"
+          >
+            <Bot className="w-4 h-4 mr-2" /> AI Assistant
+          </Button>
+        )}
+        {!isAdmin && (
+          <Button
+            variant="outline"
+            onClick={() => onNavigate("referral")}
+            className="border-green-300 text-green-700 hover:bg-green-50"
+            data-ocid="dashboard.secondary_button"
+          >
+            <Users className="w-4 h-4 mr-2" /> Referral
+          </Button>
+        )}
       </div>
+
+      {/* EMI Reminders */}
+      {!isAdmin &&
+        (() => {
+          const borrowerActiveLoans = activeLoans.filter(
+            (l) => l.borrowerId === currentUser.id,
+          );
+          if (borrowerActiveLoans.length === 0) return null;
+          return (
+            <section className="mb-8">
+              <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
+                <Bell className="w-5 h-5 text-amber-500" /> EMI Reminders
+              </h2>
+              <div className="grid gap-3 sm:grid-cols-2">
+                {borrowerActiveLoans.map((loan) => {
+                  const loanRepayments = repayments.filter(
+                    (r) => r.loanId === loan.id,
+                  );
+                  const monthlyEMI = computeMonthlyInstallment(loan);
+                  const startDate = new Date(loan.startDate);
+                  const nextEMIDate = new Date(startDate);
+                  nextEMIDate.setMonth(
+                    nextEMIDate.getMonth() + loanRepayments.length + 1,
+                  );
+                  const dueDateStr = nextEMIDate.toLocaleDateString("en-IN", {
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric",
+                  });
+                  return (
+                    <motion.div
+                      key={loan.id}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                    >
+                      <Card className="border-amber-200 bg-amber-50/60">
+                        <CardContent className="p-4">
+                          <div className="flex items-start justify-between gap-3">
+                            <div>
+                              <div className="font-semibold text-sm">
+                                {formatCurrency(loan.amount)} Loan
+                              </div>
+                              <div className="text-xs text-muted-foreground mt-0.5">
+                                {loan.purpose}
+                              </div>
+                              <div className="mt-2 text-xs">
+                                <span className="text-amber-700 font-semibold">
+                                  Next EMI:{" "}
+                                  {formatCurrency(Math.round(monthlyEMI))}
+                                </span>
+                              </div>
+                              <div className="text-xs text-muted-foreground">
+                                Due: {dueDateStr}
+                              </div>
+                            </div>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="border-amber-300 text-amber-700 hover:bg-amber-100 flex-shrink-0 text-xs"
+                              onClick={() =>
+                                toast.success(
+                                  "Reminder set! Aapko EMI date par yaad dilaya jayega.",
+                                )
+                              }
+                              data-ocid="dashboard.secondary_button"
+                            >
+                              <Bell className="w-3 h-3 mr-1" /> Remind Me
+                            </Button>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            </section>
+          );
+        })()}
 
       {/* Active Loans */}
       <section className="mb-8">
