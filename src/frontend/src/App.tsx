@@ -95,15 +95,31 @@ function AppContent() {
       <div className="flex-1">{renderPage()}</div>
       <Footer onNavigate={navigate} />
       {currentUser && currentUser.role !== "admin" && (
-        <button
-          type="button"
-          onClick={() => navigate("ai-assistant")}
-          className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-purple-600 hover:bg-purple-700 text-white shadow-lg flex items-center justify-center text-2xl transition-transform hover:scale-110"
-          title="AI Assistant"
-          data-ocid="dashboard.secondary_button"
-        >
-          🤖
-        </button>
+        <>
+          <button
+            type="button"
+            onClick={() => {
+              const txt = encodeURIComponent(
+                `LenDen Mokoko se loan lo - sirf 16 min mein! ₹1000 se ₹50 Lakh tak. Join karo: ${window.location.origin}`,
+              );
+              window.open(`https://wa.me/?text=${txt}`, "_blank");
+            }}
+            className="fixed bottom-6 right-24 z-50 w-14 h-14 rounded-full bg-green-600 hover:bg-green-500 text-white shadow-lg flex items-center justify-center text-2xl transition-transform hover:scale-110"
+            title="Share on WhatsApp"
+            data-ocid="whatsapp.open_modal_button"
+          >
+            💬
+          </button>
+          <button
+            type="button"
+            onClick={() => navigate("ai-assistant")}
+            className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-purple-600 hover:bg-purple-700 text-white shadow-lg flex items-center justify-center text-2xl transition-transform hover:scale-110"
+            title="AI Assistant"
+            data-ocid="dashboard.secondary_button"
+          >
+            🤖
+          </button>
+        </>
       )}
       <Toaster richColors />
     </div>

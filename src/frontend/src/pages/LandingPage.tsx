@@ -5,9 +5,12 @@ import {
   BookOpen,
   CheckCircle2,
   ChevronRight,
+  Copy,
   Crown,
   FileText,
   Lock,
+  MessageCircle,
+  Share2,
   Shield,
   Smartphone,
   Star,
@@ -266,7 +269,7 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
               { emoji: "🇮🇳", text: "India ka #1 Trusted P2P Lending App" },
               { emoji: "⚡", text: "16 minute mein paise milte hain" },
               { emoji: "💰", text: "₹50 Lakh tak instant approval" },
-              { emoji: "😊", text: "5,000+ happy borrowers" },
+              { emoji: "😊", text: "10,000+ satisfied users" },
             ].map((item) => (
               <div key={item.text} className="flex flex-col items-center gap-1">
                 <span className="text-2xl">{item.emoji}</span>
@@ -821,6 +824,114 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
         </div>
       </section>
 
+      {/* ── TESTIMONIALS ── */}
+      <section className="py-20 bg-muted/30">
+        <div className="max-w-5xl mx-auto px-4">
+          <motion.div
+            variants={fadeUp}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <p className="text-sm font-semibold uppercase tracking-widest text-primary mb-2">
+              Real Users, Real Stories
+            </p>
+            <h2 className="font-display text-4xl md:text-5xl font-extrabold text-foreground">
+              लोगों ने क्या कहा?
+            </h2>
+            <p className="text-muted-foreground mt-3">
+              10,000+ users trust LenDen Mokoko for quick loans & lending
+            </p>
+          </motion.div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {[
+              {
+                name: "Rajesh Kumar",
+                city: "Delhi",
+                avatar: "RK",
+                stars: 5,
+                text: "Bahut fast service! 16 minute mein paise aa gaye mere account mein. LenDen Mokoko ne meri emergency mein bahut help ki. 100% recommend!",
+              },
+              {
+                name: "Priya Sharma",
+                city: "Mumbai",
+                avatar: "PS",
+                stars: 5,
+                text: "Maine apne dost ko loan diya app ke through — super easy process tha. Commission bhi clear hai aur sab legal documents bhi milte hain.",
+              },
+              {
+                name: "Mohan Verma",
+                city: "Jaipur",
+                avatar: "MV",
+                stars: 5,
+                text: "Bank se zyada bharosemand! ₹50,000 loan mila sirf 16 minutes mein. Interest rate bhi 5% rakha. Shukriya LenDen Mokoko 🙏",
+              },
+              {
+                name: "Sunita Devi",
+                city: "Lucknow",
+                avatar: "SD",
+                stars: 5,
+                text: "Ghar baithe phone se loan le liya! Kisi bank ke chakkar nahi lagane pade. Meri family ko bahut zaroorat thi — app ne poori kar di.",
+              },
+              {
+                name: "Amit Patel",
+                city: "Ahmedabad",
+                avatar: "AP",
+                stars: 5,
+                text: "Premium membership li ₹9/week mein — aur mujhe priority approval mili. Business ke liye ₹2 lakh loan mila 16 minute mein. Amazing!",
+              },
+              {
+                name: "Kavita Singh",
+                city: "Patna",
+                avatar: "KS",
+                stars: 5,
+                text: "Pehle dar lag raha tha par legal documents aur UPI payment se full trust aa gaya. Ab main apni family ko bhi loan deti hoon is app se.",
+              },
+            ].map((t, i) => (
+              <motion.div
+                key={t.name}
+                variants={fadeUp}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.08 }}
+                data-ocid={`testimonials.item.${i + 1}`}
+              >
+                <div className="bg-card rounded-2xl p-5 shadow-md border border-border hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 h-full flex flex-col">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-11 h-11 rounded-full bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                      {t.avatar}
+                    </div>
+                    <div>
+                      <p className="font-bold text-sm text-foreground">
+                        {t.name}
+                      </p>
+                      <p className="text-xs text-muted-foreground">{t.city}</p>
+                    </div>
+                    <div className="ml-auto flex items-center gap-0.5">
+                      <span className="flex gap-0.5">
+                        <Star className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" />
+                        <Star className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" />
+                        <Star className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" />
+                        <Star className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" />
+                        <Star className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" />
+                      </span>
+                    </div>
+                  </div>
+                  <p className="text-sm text-muted-foreground leading-relaxed flex-1">
+                    "{t.text}"
+                  </p>
+                  <p className="text-xs text-primary font-semibold mt-3">
+                    ✓ Verified User
+                  </p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ── PRICING ── */}
       <section
         className="py-20"
@@ -999,6 +1110,62 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
           </motion.div>
         </div>
       </section>
+
+      {/* ── STICKY WHATSAPP SHARE BAR (mobile only) ── */}
+      <div
+        className="md:hidden fixed bottom-0 left-0 right-0 z-50 px-4 py-3 flex items-center gap-3 border-t border-green-200"
+        style={{ background: "oklch(0.22 0.07 155)" }}
+      >
+        <div className="flex-1 min-w-0">
+          <p className="text-white text-xs font-bold truncate">
+            📲 App Share Karo, ₹10 Pao!
+          </p>
+          <p className="text-white/60 text-[10px] truncate">
+            Dosto ko refer karo aur bonus pao
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={() => {
+            const txt = encodeURIComponent(
+              `LenDen Mokoko se loan lo - sirf 16 min mein! ₹1000 se ₹50 Lakh tak. Join karo: ${window.location.origin}`,
+            );
+            window.open(`https://wa.me/?text=${txt}`, "_blank");
+          }}
+          className="flex items-center gap-1.5 bg-green-500 hover:bg-green-400 text-white text-xs font-bold px-3 py-2 rounded-full flex-shrink-0 transition-colors"
+          data-ocid="whatsapp.primary_button"
+        >
+          <MessageCircle className="w-3.5 h-3.5" /> Share
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            navigator.clipboard.writeText(window.location.origin).then(() => {
+              const el = document.getElementById("copy-toast");
+              if (el) {
+                el.style.opacity = "1";
+                setTimeout(() => {
+                  el.style.opacity = "0";
+                }, 1800);
+              }
+            });
+          }}
+          className="flex items-center gap-1.5 bg-white/10 hover:bg-white/20 text-white text-xs font-bold px-3 py-2 rounded-full flex-shrink-0 transition-colors"
+          data-ocid="whatsapp.secondary_button"
+        >
+          <Copy className="w-3.5 h-3.5" /> Copy
+        </button>
+        <div
+          id="copy-toast"
+          className="absolute -top-8 left-1/2 -translate-x-1/2 bg-black/80 text-white text-xs px-3 py-1.5 rounded-full pointer-events-none transition-opacity duration-300"
+          style={{ opacity: 0 }}
+        >
+          Link copied! ✓
+        </div>
+      </div>
+
+      {/* Bottom padding for mobile sticky bar */}
+      <div className="md:hidden h-16" />
 
       <AppAdvertisement />
 

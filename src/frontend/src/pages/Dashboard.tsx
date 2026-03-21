@@ -23,6 +23,7 @@ import {
   FileText,
   History,
   IndianRupee,
+  MessageCircle,
   Plus,
   Star,
   Tag,
@@ -167,6 +168,65 @@ export function Dashboard({ onNavigate }: DashboardProps) {
 
       {/* Ad Carousel — non-admin only */}
       {!isAdmin && <AdCarousel onNavigate={onNavigate} />}
+
+      {/* Invite & Earn Card — non-admin only */}
+      {!isAdmin && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15 }}
+          className="mb-6"
+        >
+          <div
+            className="rounded-2xl p-5 relative overflow-hidden flex flex-col sm:flex-row items-start sm:items-center gap-4 shadow-lg"
+            style={{
+              background:
+                "linear-gradient(135deg, oklch(0.35 0.13 155), oklch(0.28 0.10 155))",
+            }}
+          >
+            <div
+              className="absolute top-0 right-0 w-32 h-32 rounded-full opacity-10"
+              style={{
+                background: "oklch(0.65 0.19 155)",
+                transform: "translate(30%, -30%)",
+              }}
+            />
+            <div className="text-4xl flex-shrink-0">🎁</div>
+            <div className="flex-1 min-w-0">
+              <h3 className="font-bold text-white text-base leading-snug">
+                Dosto ko Invite Karo, ₹10 Bonus Pao!
+              </h3>
+              <p className="text-white/70 text-xs mt-0.5">
+                Har referral pe ₹10 bonus • Unlimited earnings • Abhi share
+                karo!
+              </p>
+            </div>
+            <div className="flex gap-2 flex-shrink-0 flex-wrap">
+              <button
+                type="button"
+                onClick={() => {
+                  const txt = encodeURIComponent(
+                    `LenDen Mokoko se loan lo - sirf 16 min mein! ₹1000 se ₹50 Lakh tak. Join karo: ${window.location.origin}`,
+                  );
+                  window.open(`https://wa.me/?text=${txt}`, "_blank");
+                }}
+                className="flex items-center gap-1.5 bg-green-400 hover:bg-green-300 text-green-900 font-bold text-xs px-3 py-2 rounded-full transition-colors"
+                data-ocid="invite.primary_button"
+              >
+                <MessageCircle className="w-3.5 h-3.5" /> WhatsApp Share
+              </button>
+              <button
+                type="button"
+                onClick={() => onNavigate("referral")}
+                className="flex items-center gap-1.5 bg-white/15 hover:bg-white/25 text-white font-bold text-xs px-3 py-2 rounded-full transition-colors"
+                data-ocid="invite.secondary_button"
+              >
+                <Users className="w-3.5 h-3.5" /> Referral Program
+              </button>
+            </div>
+          </div>
+        </motion.div>
+      )}
 
       {/* KPI Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">

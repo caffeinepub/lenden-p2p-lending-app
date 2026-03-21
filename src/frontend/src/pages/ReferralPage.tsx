@@ -30,7 +30,8 @@ export function ReferralPage({ onNavigate }: ReferralPageProps) {
     return Number.parseInt(localStorage.getItem(storageKey) ?? "0", 10);
   });
 
-  const referralLink = `https://lendenmokoko.app/ref/${referralCode}`;
+  const appUrl = window.location.origin;
+  const referralLink = `${appUrl}?ref=${referralCode}`;
 
   useEffect(() => {
     localStorage.setItem(storageKey, String(referralCount));
