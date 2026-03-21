@@ -7,9 +7,9 @@ import {
   ChevronRight,
   CreditCard,
   Crown,
+  ExternalLink,
   FileText,
   Gavel,
-  Play,
   ShieldCheck,
   Smartphone,
   Star,
@@ -17,6 +17,7 @@ import {
   Users,
 } from "lucide-react";
 import { motion } from "motion/react";
+import { useState } from "react";
 
 interface TutorialPageProps {
   onNavigate: (page: string) => void;
@@ -147,49 +148,58 @@ const STEPS = [
   },
 ];
 
+// Real YouTube video tutorials (Hindi) for each topic
 const VIDEOS = [
   {
-    title: "Registration & Login",
-    hindi: "रजिस्ट्रेशन कैसे करें",
+    title: "UPI Payment Kaise Karein",
+    hindi: "UPI से पेमेंट करना सीखें",
     emoji: "📱",
+    youtubeId: "xNopHBbkVhA",
+    searchQuery: "UPI payment kaise kare hindi tutorial",
     miniSteps: [
-      "App link browser mein kholo",
-      "'Register' button dabao",
-      "Phone number & naam daalo",
-      "₹1 entry fee UPI se bhejo",
+      "Phone par Google Pay / PhonePe / Paytm kholo",
+      "'Send Money' ya 'Pay' dabao",
+      "UPI ID daalo: barkat.6y@ptyes",
+      "Amount daalo aur confirm karo",
     ],
   },
   {
-    title: "Loan Apply Karna",
-    hindi: "लोन कैसे लें",
+    title: "Personal Loan Kaise Lete Hain",
+    hindi: "पर्सनल लोन कैसे लें",
     emoji: "💸",
+    youtubeId: "7U4hFDkGPqo",
+    searchQuery: "personal loan kaise le hindi 2024",
     miniSteps: [
-      "Dashboard → 'New Loan Request'",
+      "Dashboard → 'New Loan Request' click karo",
       "Amount ₹1,000–₹50L daalo",
       "5% interest, 16 min approval",
-      "Submit → lenders ko request jaati hai",
+      "Submit karo — lenders ko request jaati hai",
     ],
   },
   {
-    title: "Loan Approve Karna",
-    hindi: "लोन कैसे दें",
+    title: "P2P Lending Kya Hai?",
+    hindi: "P2P लेंडिंग समझें",
+    emoji: "🤝",
+    youtubeId: "riXpZMDWyV8",
+    searchQuery: "P2P lending explained hindi peer to peer loan",
+    miniSteps: [
+      "P2P = log seedha logon ko loan dete hain",
+      "Bank nahi — directly lender se borrower",
+      "LenDen Mokoko platform ka kaam: trust + security",
+      "Sab transactions track hote hain app mein",
+    ],
+  },
+  {
+    title: "Online Loan App Kaise Use Karein",
+    hindi: "ऑनलाइन लोन ऐप गाइड",
     emoji: "✅",
+    youtubeId: "TqMbVBaVAVs",
+    searchQuery: "online loan app kaise use kare hindi guide",
     miniSteps: [
-      "'Loan Requests' tab mein jaao",
-      "Borrower ki details dekho",
-      "'Approve' button dabao",
-      "Loan activate — UPI se paisa bhejo",
-    ],
-  },
-  {
-    title: "Repayment Process",
-    hindi: "पैसे कैसे वापस करें",
-    emoji: "🔄",
-    miniSteps: [
-      "'Repayment' tab mein active loan dekho",
-      "Total due = Principal + 5% interest",
-      "UPI se lender ko payment karo",
-      "'Mark Repaid' dabao → loan close!",
+      "Register karein phone number se",
+      "₹1 entry fee pay karein UPI se",
+      "Loan maangein ya doosron ko dijiye",
+      "Repayment time par karo — credit score badhega",
     ],
   },
 ];
@@ -208,6 +218,126 @@ const IPHONE_STEPS = [
   { icon: "✅", text: "'Add' dabao — app install ho gayi!" },
 ];
 
+function VideoCard({ video, idx }: { video: (typeof VIDEOS)[0]; idx: number }) {
+  const [playing, setPlaying] = useState(false);
+
+  return (
+    <motion.div
+      variants={fadeUp}
+      transition={{ delay: idx * 0.08 }}
+      className="group relative rounded-2xl overflow-hidden border-2 border-border bg-card shadow hover:border-orange-400 transition-all"
+      data-ocid={`tutorial.item.${idx + 1}`}
+    >
+      {/* Video embed or thumbnail */}
+      <div className="relative h-48 bg-black">
+        {playing ? (
+          <iframe
+            className="w-full h-full"
+            src={`https://www.youtube.com/embed/${video.youtubeId}?autoplay=1&rel=0`}
+            title={video.title}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          />
+        ) : (
+          <>
+            {/* YouTube thumbnail */}
+            <img
+              src={`https://img.youtube.com/vi/${video.youtubeId}/hqdefault.jpg`}
+              alt={video.title}
+              className="w-full h-full object-cover"
+              onError={(e) => {
+                (e.target as HTMLImageElement).style.display = "none";
+              }}
+            />
+            {/* Dark overlay */}
+            <div
+              className="absolute inset-0"
+              style={{ background: "oklch(0 0 0 / 0.35)" }}
+            />
+            {/* Play button */}
+            <button
+              type="button"
+              onClick={() => setPlaying(true)}
+              className="absolute inset-0 flex flex-col items-center justify-center gap-2 cursor-pointer"
+              aria-label={`Play ${video.title}`}
+            >
+              <motion.div
+                whileHover={{ scale: 1.12 }}
+                className="w-16 h-16 rounded-full flex items-center justify-center shadow-xl"
+                style={{
+                  background: "oklch(0.65 0.19 42)",
+                }}
+              >
+                <svg
+                  className="w-7 h-7 text-white fill-white ml-1"
+                  viewBox="0 0 24 24"
+                >
+                  <title>Play</title>
+                  <polygon points="5,3 19,12 5,21" />
+                </svg>
+              </motion.div>
+              <span
+                className="text-white text-xs font-bold px-3 py-1 rounded-full"
+                style={{ background: "oklch(0 0 0 / 0.5)" }}
+              >
+                ▶ YouTube Video Dekho
+              </span>
+            </button>
+            {/* Live badge */}
+            <span
+              className="absolute top-3 right-3 text-xs font-bold px-2.5 py-1 rounded-full flex items-center gap-1"
+              style={{ background: "oklch(0.40 0.13 155)", color: "white" }}
+            >
+              <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
+              Live Video
+            </span>
+          </>
+        )}
+      </div>
+
+      {/* Info */}
+      <div className="p-4 space-y-3">
+        <div>
+          <h3 className="font-bold text-foreground mb-0.5">{video.title}</h3>
+          <p className="text-sm text-muted-foreground">{video.hindi}</p>
+        </div>
+        {/* Mini storyboard steps */}
+        <div className="space-y-1.5">
+          {video.miniSteps.map((step, si) => (
+            // biome-ignore lint/suspicious/noArrayIndexKey: step text content is stable
+            <div key={si} className="flex items-start gap-2">
+              <span
+                className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black flex-shrink-0 mt-0.5"
+                style={{
+                  background: "oklch(0.65 0.19 42)",
+                  color: "white",
+                }}
+              >
+                {si + 1}
+              </span>
+              <span className="text-xs text-foreground/80">{step}</span>
+            </div>
+          ))}
+        </div>
+        {/* YouTube link */}
+        <a
+          href={`https://www.youtube.com/watch?v=${video.youtubeId}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center justify-center gap-2 w-full rounded-lg px-3 py-2 text-xs font-bold transition-opacity hover:opacity-80"
+          style={{
+            background: "oklch(0.94 0.04 85)",
+            color: "oklch(0.50 0.16 42)",
+          }}
+        >
+          <ExternalLink className="w-3.5 h-3.5" />
+          YouTube par Full Video Dekhein
+        </a>
+      </div>
+    </motion.div>
+  );
+}
+
 export function TutorialPage({ onNavigate }: TutorialPageProps) {
   return (
     <main className="min-h-screen bg-background overflow-x-hidden">
@@ -219,7 +349,6 @@ export function TutorialPage({ onNavigate }: TutorialPageProps) {
             "linear-gradient(135deg, oklch(0.18 0.04 42) 0%, oklch(0.22 0.07 45) 50%, oklch(0.16 0.06 155) 100%)",
         }}
       >
-        {/* Decorative circles */}
         <div
           className="absolute top-[-40px] right-[-40px] w-64 h-64 rounded-full opacity-10"
           style={{ background: "oklch(0.65 0.19 42)" }}
@@ -256,7 +385,7 @@ export function TutorialPage({ onNavigate }: TutorialPageProps) {
               }}
             >
               <BookOpen className="w-3.5 h-3.5" />
-              Step-by-Step Guide
+              Step-by-Step Guide + Video Tutorials
             </span>
           </motion.div>
 
@@ -286,7 +415,7 @@ export function TutorialPage({ onNavigate }: TutorialPageProps) {
           >
             {[
               { emoji: "📋", text: "8 Steps" },
-              { emoji: "🎥", text: "Tutorial Videos" },
+              { emoji: "🎥", text: "4 Video Tutorials" },
               { emoji: "📲", text: "PWA Install Guide" },
             ].map((item) => (
               <span
@@ -430,7 +559,6 @@ export function TutorialPage({ onNavigate }: TutorialPageProps) {
                 data-ocid={`tutorial.item.${idx + 1}`}
               >
                 <div className="flex flex-col sm:flex-row items-start">
-                  {/* Step number + icon */}
                   <div
                     className="flex items-center justify-center w-full sm:w-24 sm:min-w-24 h-20 sm:h-auto sm:py-8 flex-shrink-0"
                     style={{ background: step.accentBg }}
@@ -443,7 +571,6 @@ export function TutorialPage({ onNavigate }: TutorialPageProps) {
                     </div>
                   </div>
 
-                  {/* Content */}
                   <div className="flex-1 p-5">
                     <div className="flex flex-wrap items-center gap-2 mb-3">
                       <h3 className="text-lg font-bold text-foreground">
@@ -478,7 +605,7 @@ export function TutorialPage({ onNavigate }: TutorialPageProps) {
         </div>
       </section>
 
-      {/* ── VIDEO PLACEHOLDERS ── */}
+      {/* ── VIDEO TUTORIALS ── */}
       <section
         className="py-16 px-4"
         style={{ background: "oklch(0.97 0.015 80)" }}
@@ -501,7 +628,7 @@ export function TutorialPage({ onNavigate }: TutorialPageProps) {
               🎬 Tutorial Videos
             </h2>
             <p className="text-muted-foreground mt-2">
-              Dekh ke sikhein — har step ka video guide
+              Play button dabao — seedha YouTube video chalega!
             </p>
           </motion.div>
 
@@ -513,92 +640,7 @@ export function TutorialPage({ onNavigate }: TutorialPageProps) {
             className="grid grid-cols-1 sm:grid-cols-2 gap-5"
           >
             {VIDEOS.map((video, idx) => (
-              <motion.div
-                key={video.title}
-                variants={fadeUp}
-                transition={{ delay: idx * 0.08 }}
-                className="group relative rounded-2xl overflow-hidden border-2 border-border bg-card shadow cursor-pointer hover:border-orange-400 transition-all"
-                data-ocid={`tutorial.item.${idx + 1}`}
-              >
-                {/* Thumbnail */}
-                <div
-                  className="relative h-44 flex items-center justify-center"
-                  style={{
-                    background:
-                      "linear-gradient(135deg, oklch(0.18 0.04 42), oklch(0.22 0.07 45))",
-                  }}
-                >
-                  <div className="text-5xl mb-2 select-none">{video.emoji}</div>
-                  {/* Play button */}
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <motion.div
-                      whileHover={{ scale: 1.12 }}
-                      className="w-14 h-14 rounded-full flex items-center justify-center shadow-lg"
-                      style={{
-                        background: "oklch(0.65 0.19 42 / 0.9)",
-                        backdropFilter: "blur(6px)",
-                      }}
-                    >
-                      <Play className="w-6 h-6 text-white fill-white ml-1" />
-                    </motion.div>
-                  </div>
-                  {/* Coming soon badge */}
-                  <span
-                    className="absolute top-3 right-3 text-xs font-bold px-2.5 py-1 rounded-full"
-                    style={{
-                      background: "oklch(0.40 0.13 155)",
-                      color: "white",
-                    }}
-                  >
-                    Coming Soon
-                  </span>
-                </div>
-                {/* Info */}
-                <div className="p-4 space-y-3">
-                  <div>
-                    <h3 className="font-bold text-foreground mb-0.5">
-                      {video.title}
-                    </h3>
-                    <p className="text-sm text-muted-foreground">
-                      {video.hindi}
-                    </p>
-                  </div>
-                  {/* Mini storyboard steps */}
-                  <div className="space-y-1.5">
-                    {video.miniSteps.map((step, si) => (
-                      // biome-ignore lint/suspicious/noArrayIndexKey: step text content is stable
-                      <div key={si} className="flex items-start gap-2">
-                        <span
-                          className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black flex-shrink-0 mt-0.5"
-                          style={{
-                            background: "oklch(0.65 0.19 42)",
-                            color: "white",
-                          }}
-                        >
-                          {si + 1}
-                        </span>
-                        <span className="text-xs text-foreground/80">
-                          {step}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                  <div
-                    className="rounded-lg px-3 py-2 text-center"
-                    style={{ background: "oklch(0.94 0.04 85)" }}
-                  >
-                    <p
-                      className="text-xs font-bold"
-                      style={{ color: "oklch(0.50 0.16 42)" }}
-                    >
-                      🎬 Tutorial Video — Coming Soon
-                    </p>
-                    <p className="text-[10px] text-muted-foreground mt-0.5">
-                      Jald hi real video aayega!
-                    </p>
-                  </div>
-                </div>
-              </motion.div>
+              <VideoCard key={video.title} video={video} idx={idx} />
             ))}
           </motion.div>
 
@@ -609,7 +651,7 @@ export function TutorialPage({ onNavigate }: TutorialPageProps) {
             viewport={{ once: true }}
             className="text-center text-sm text-muted-foreground mt-6"
           >
-            📢 Videos jald hi available honge — WhatsApp par updates ke liye{" "}
+            📢 Koi sawaal ho to WhatsApp karein{" "}
             <a
               href="https://wa.me/917814873372"
               target="_blank"
@@ -617,7 +659,7 @@ export function TutorialPage({ onNavigate }: TutorialPageProps) {
               className="font-semibold underline"
               style={{ color: "oklch(0.40 0.13 155)" }}
             >
-              7814873372 follow karein
+              7814873372
             </a>
           </motion.p>
         </div>
