@@ -1,30 +1,26 @@
 # LenDen Mokoko
 
 ## Current State
-App has loan offers page, ad commission tracking, support page, advertise page, admin dashboard.
+EMI calculator is embedded inside NewLoanRequest.tsx with a flat-rate formula, visual bar, 4 breakdown cards, and a 3-row mini schedule table.
 
 ## Requested Changes (Diff)
 
 ### Add
-- Real brand loan offer cards: Home Loan, Gold Loan, Muthoot Finance, Bajaj Finserv, Bajaj Markets
-- "Trending" section with animated hot badge and marquee/scroll effect
-- Instant money promise messaging throughout: "Paisa Turant Milega", "100% Bharosa", "16 Min Mein Account Mein"
-- Active advertisement banners (rotating/animated) on dashboard and landing page
-- Commission demand notice: "Har loan par 7% commission aapko milega"
-- Trust badges and social proof: user count, loan disbursed amount, 5-star ratings
+- Standalone EMI Calculator page (EmiCalculatorPage.tsx) accessible from Dashboard/Navbar
+- Full EMI amortization schedule table (all months)
+- Pie/donut chart showing principal vs interest vs commission split
+- Summary stats: Total interest saved comparison at different rates
+- Tabs: Simple EMI view vs Full Schedule
 
 ### Modify
-- LoanOffersPage: add branded offers (Muthoot, Bajaj Finserv, Bajaj Markets, Home Loan, Gold Loan sections)
-- LandingPage: add trending banner, instant money promise, brand logos section
-- Dashboard: add rotating ad banner at top
-- AppAdvertisement: make more prominent and active with animations
+- Improve inline EMI calculator in NewLoanRequest with cleaner visuals, animated counter for EMI amount, and reducing balance method option
+- Navbar and Dashboard to include EMI Calculator link
 
 ### Remove
-- Nothing removed.
+- Nothing removed
 
 ## Implementation Plan
-1. Update LoanOffersPage with branded offer sections and trending badges.
-2. Add TrendingBanner component with marquee/animated scroll.
-3. Update LandingPage with instant money promise, trust section, brand logos.
-4. Update Dashboard with rotating ad carousel.
-5. Ensure commission messaging is visible on all loan offer interactions.
+1. Create EmiCalculatorPage.tsx with full-featured calculator: sliders, animated EMI display, donut chart (SVG), full amortization table, tabs for summary vs schedule
+2. Add EMI Calculator route in App.tsx
+3. Add EMI Calculator button in Dashboard quick actions and Navbar menu
+4. Enhance inline EMI section in NewLoanRequest with better visuals

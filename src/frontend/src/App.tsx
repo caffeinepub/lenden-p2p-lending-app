@@ -8,6 +8,7 @@ import { ApproveLoan } from "./pages/ApproveLoan";
 import { AuthPage } from "./pages/AuthPage";
 import { CreditScorePage } from "./pages/CreditScorePage";
 import { Dashboard } from "./pages/Dashboard";
+import { EmiCalculatorPage } from "./pages/EmiCalculatorPage";
 import { LandingPage } from "./pages/LandingPage";
 import { LegalDocuments } from "./pages/LegalDocuments";
 import { LegalEscalation } from "./pages/LegalEscalation";
@@ -67,6 +68,8 @@ function AppContent() {
         return <MembershipPage onNavigate={navigate} />;
       case page === "loan-offers":
         return <LoanOffersPage onNavigate={navigate} />;
+      case page === "emi-calculator":
+        return <EmiCalculatorPage onNavigate={navigate} />;
       case page === "credit-score":
         return <CreditScorePage onNavigate={navigate} />;
       case page.startsWith("promissory-"):

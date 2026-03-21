@@ -13,6 +13,8 @@ import {
 import {
   AlertTriangle,
   BarChart3,
+  Calculator,
+  CheckCircle2,
   CreditCard,
   Crown,
   FileText,
@@ -132,8 +134,15 @@ export function Dashboard({ onNavigate }: DashboardProps) {
                 </Badge>
               )}
             </div>
-            <p className="text-muted-foreground mt-1">
-              Welcome, {currentUser.name} {isAdmin ? "👑" : "👋"}
+            <p className="text-muted-foreground mt-1 flex items-center gap-2 flex-wrap">
+              Welcome,{" "}
+              <span className="font-semibold text-foreground">
+                {currentUser.name}
+              </span>{" "}
+              {isAdmin ? "👑" : "👋"}
+              <span className="inline-flex items-center gap-1 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full shadow-sm">
+                <CheckCircle2 className="w-3 h-3" /> Verified
+              </span>
             </p>
           </div>
           {!isAdmin && !currentUser.isPremium && (
@@ -191,17 +200,22 @@ export function Dashboard({ onNavigate }: DashboardProps) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.08 }}
           >
-            <Card className="border-border hover:shadow-md transition-shadow">
+            <Card className="border-border hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 bg-gradient-to-br from-card to-secondary/20 overflow-hidden relative">
+              <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-primary/5 to-transparent rounded-bl-3xl" />
               <CardContent className="p-5">
                 <div className="flex items-start justify-between">
                   <div>
-                    <p className="text-xs text-muted-foreground">{kpi.label}</p>
-                    <p className="text-xs text-muted-foreground">{kpi.sub}</p>
-                    <p className={`text-xl font-bold mt-2 ${kpi.color}`}>
+                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                      {kpi.label}
+                    </p>
+                    <p className="text-xs text-muted-foreground/70 mt-0.5">
+                      {kpi.sub}
+                    </p>
+                    <p className={`text-2xl font-black mt-2 ${kpi.color}`}>
                       {kpi.value}
                     </p>
                   </div>
-                  <div className="w-10 h-10 bg-secondary rounded-lg flex items-center justify-center">
+                  <div className="w-11 h-11 bg-primary/10 rounded-xl flex items-center justify-center shadow-sm ring-1 ring-primary/10">
                     <kpi.icon className="w-5 h-5 text-primary" />
                   </div>
                 </div>
@@ -282,6 +296,16 @@ export function Dashboard({ onNavigate }: DashboardProps) {
             data-ocid="dashboard.secondary_button"
           >
             <Tag className="w-4 h-4 mr-2" /> Loan Offers
+          </Button>
+        )}
+        {!isAdmin && (
+          <Button
+            variant="outline"
+            onClick={() => onNavigate("emi-calculator")}
+            className="border-primary/40 text-primary hover:bg-primary/5"
+            data-ocid="dashboard.secondary_button"
+          >
+            <Calculator className="w-4 h-4 mr-2" /> EMI Calculator
           </Button>
         )}
       </div>
