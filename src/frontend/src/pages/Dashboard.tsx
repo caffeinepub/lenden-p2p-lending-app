@@ -36,9 +36,9 @@ import { toast } from "sonner";
 import { AdCarousel } from "../components/AdCarousel";
 import { useApp } from "../store/appStore";
 import {
-  PLATFORM_COMMISSION_RATE,
   PLATFORM_ENTRY_FEE,
   PLATFORM_EXIT_FEE,
+  commissionLabel,
   computeMonthlyInstallment,
   computeTotalDue,
   formatCurrency,
@@ -562,9 +562,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
                         )}
                         <div className="flex justify-between text-xs">
                           <span className="text-muted-foreground">
-                            Commission (
-                            {(PLATFORM_COMMISSION_RATE * 100).toFixed(0)}
-                            %)
+                            Commission ( Commission (Flat)
                           </span>
                           <span className="text-[oklch(0.55_0.16_50)] font-medium">
                             {formatCurrency(loan.commissionAmount)}
@@ -711,7 +709,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
                 highlight: true,
               },
               {
-                label: `Commission (${(PLATFORM_COMMISSION_RATE * 100).toFixed(0)}%)`,
+                label: "Commission (Flat Fee)",
                 sub: "Commissions",
                 value: formatCurrency(totalCommission),
                 highlight: false,

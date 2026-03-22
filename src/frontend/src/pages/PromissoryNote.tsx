@@ -6,8 +6,8 @@ import { motion } from "motion/react";
 import { useRef } from "react";
 import { useApp } from "../store/appStore";
 import {
-  PLATFORM_COMMISSION_RATE,
   PLATFORM_EXIT_FEE,
+  commissionLabel,
   computeMonthlyInstallment,
   computeTotalDue,
   formatCurrency,
@@ -169,12 +169,9 @@ export function PromissoryNote({ loanId, onNavigate }: PromissoryNoteProps) {
                       <td className="px-4 py-3 text-right font-bold">₹1</td>
                     </tr>
                     <tr className="border-t border-primary/10 bg-[oklch(0.96_0.06_50_/_0.4)]">
-                      <td className="px-4 py-3">
-                        Commission {(PLATFORM_COMMISSION_RATE * 100).toFixed(0)}
-                        %
-                      </td>
+                      <td className="px-4 py-3">Commission (Flat Fee)</td>
                       <td className="px-4 py-3 text-muted-foreground text-xs">
-                        {(PLATFORM_COMMISSION_RATE * 100).toFixed(0)}% of{" "}
+                        {commissionLabel(loan.amount)} of{" "}
                         {formatCurrency(loan.amount)} principal
                       </td>
                       <td className="px-4 py-3 text-right font-bold text-[oklch(0.50_0.14_50)]">
@@ -212,8 +209,7 @@ export function PromissoryNote({ loanId, onNavigate }: PromissoryNoteProps) {
                       Net Amount to Borrower
                     </p>
                     <p className="text-xs text-[oklch(0.45_0.07_158)] mt-0.5">
-                      After deducting{" "}
-                      {(PLATFORM_COMMISSION_RATE * 100).toFixed(0)}% commission
+                      After deducting {commissionLabel(loan.amount)} commission
                       from {formatCurrency(loan.amount)}
                     </p>
                   </div>

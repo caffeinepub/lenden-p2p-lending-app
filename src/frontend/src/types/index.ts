@@ -6,8 +6,8 @@ export interface User {
   phone: string;
   role: UserRole;
   isPremium?: boolean;
-  membershipExpiry?: string; // ISO date string
-  creditScore?: number; // 300-900
+  membershipExpiry?: string;
+  creditScore?: number;
 }
 
 export type LoanStatus = "pending" | "active" | "completed" | "rejected";
@@ -29,9 +29,7 @@ export interface Loan {
   startDate: string;
   legalStatus: LegalStatus;
   promissoryNote?: string;
-  /** 7% of principal charged as platform commission */
   commissionAmount: number;
-  /** amount borrower actually receives = amount - commissionAmount */
   netAmountToBorrower: number;
 }
 
@@ -51,7 +49,6 @@ export interface LoanRequest {
   durationMonths: number;
   requestedInterestRate: number;
   createdAt: string;
-  /** UTR / Transaction Reference Number for commission payment */
   utr?: string;
 }
 
@@ -81,19 +78,24 @@ export interface WithdrawalRecord {
   note: string;
 }
 
-// ─── Platform Fee Constants ──────────────────────────────────────────────────────
-export const PLATFORM_ENTRY_FEE = 1; // ₹1 on registration
-export const PLATFORM_EXIT_FEE = 1; // ₹1 on loan closure
-export const PLATFORM_COMMISSION_RATE = 0.07; // 7% of loan principal
-export const MEMBERSHIP_WEEKLY_PRICE = 9; // ₹9/week
-export const MEMBERSHIP_MONTHLY_PRICE = 99; // ₹99/month
-export const MEMBERSHIP_YEARLY_PRICE = 499; // ₹499/year
+// Platform Fee Constants
+export const PLATFORM_ENTRY_FEE = 1;
+export const PLATFORM_EXIT_FEE = 1;
+// Commission: ₹9 for loans ≤₹10,000 | ₹301 for loans >₹10,000
+export const PLATFORM_COMMISSION_RATE = 0; // kept for legacy references; use computeCommission()
+export const MEMBERSHIP_WEEKLY_PRICE = 9;
+export const MEMBERSHIP_MONTHLY_PRICE = 99;
+export const MEMBERSHIP_YEARLY_PRICE = 499;
+export const ADMIN_PHONE = "barkat6y";
 
-// Admin phone number - only this number gets admin access
-export const ADMIN_PHONE = "barkat6y"; // Admin can login with this phone
-
+/** ₹9 for loans ≤₹10,000 | ₹301 for loans >₹10,000 */
 export function computeCommission(amount: number): number {
-  return Math.round(amount * PLATFORM_COMMISSION_RATE);
+  return amount > 10000 ? 301 : 9;
+}
+
+/** Label for commission, e.g. "₹9 (flat)" */
+export function commissionLabel(amount: number): string {
+  return amount > 10000 ? "₹301 (flat)" : "₹9 (flat)";
 }
 
 export function computeNetAmount(amount: number): number {

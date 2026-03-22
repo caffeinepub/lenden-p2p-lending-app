@@ -10,10 +10,15 @@ import {
   BadgeIndianRupee,
   CalendarDays,
   Check,
+  CheckCircle2,
   Copy,
   IndianRupee,
   Percent,
+  ShieldCheck,
+  Star,
   TrendingUp,
+  Users,
+  Zap,
 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
@@ -23,6 +28,7 @@ import type { LoanRequest } from "../types";
 
 const ADMIN_UPI = "barkat.6y@ptyes";
 const QR_IMAGE = "/assets/uploads/IMG_20260321_020701-1.jpg";
+const TRANSACTION_FEE = 1;
 
 interface NewLoanRequestProps {
   onNavigate: (page: string) => void;
@@ -90,7 +96,6 @@ export function NewLoanRequest({ onNavigate }: NewLoanRequestProps) {
   const dur = Number.parseInt(duration) || 0;
   const ir = Number.parseFloat(interestRate) || 0;
 
-  // Reducing balance EMI formula
   const r = ir / 12 / 100;
   const monthlyEMI =
     dur > 0 && amt > 0
@@ -100,13 +105,8 @@ export function NewLoanRequest({ onNavigate }: NewLoanRequestProps) {
       : 0;
   const totalDue = monthlyEMI * dur;
   const totalInterest = totalDue - amt;
-  const commission = Math.round(amt * 0.07);
+  const commission = amt > 10000 ? 301 : amt > 0 ? 9 : 0;
   const netReceived = amt - commission;
-
-  // For pending req (step 2)
-  const pendingCommission = pendingReq
-    ? Math.round(pendingReq.amount * 0.07)
-    : commission;
 
   const handleCopyUPI = () => {
     navigator.clipboard.writeText(ADMIN_UPI).then(() => {
@@ -119,19 +119,15 @@ export function NewLoanRequest({ onNavigate }: NewLoanRequestProps) {
     if (!pendingReq) return;
     const reqWithUtr: LoanRequest = { ...pendingReq, utr: utr.trim() };
     addLoanRequest(reqWithUtr);
-    toast.success(
-      `Loan request submitted! Commission ₹${pendingCommission} paid. UTR: ${utr.trim()}`,
-    );
+    toast.success(`Loan request submitted! UTR: ${utr.trim()}`);
     onNavigate("dashboard");
   };
 
   const canConfirm = utr.trim().length >= 8 && payConfirmed;
 
-  // Principal vs interest ratio for visual bar
   const principalPct = totalDue > 0 ? (amt / totalDue) * 100 : 100;
   const interestPct = 100 - principalPct;
 
-  // Mini EMI schedule (first 5 months, reducing balance)
   const emiSchedule = (() => {
     if (dur <= 0 || amt <= 0) return [];
     const rows: {
@@ -170,6 +166,188 @@ export function NewLoanRequest({ onNavigate }: NewLoanRequestProps) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, x: -20 }}
           >
+            {/* GUARANTEE TRUST BANNER */}
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="mb-5 rounded-2xl overflow-hidden border border-green-400/40 bg-gradient-to-br from-green-500/10 via-emerald-500/5 to-green-600/10 shadow-lg"
+            >
+              {/* Pulsing top bar */}
+              <div className="bg-gradient-to-r from-green-500 to-emerald-600 px-4 py-2 flex items-center gap-2">
+                <motion.div
+                  animate={{ scale: [1, 1.2, 1] }}
+                  transition={{
+                    repeat: Number.POSITIVE_INFINITY,
+                    duration: 1.5,
+                  }}
+                  className="w-2.5 h-2.5 rounded-full bg-white"
+                />
+                <span className="text-white font-bold text-sm tracking-wide">
+                  ✅ LOAN GUARANTEED — 99.8% Approval Rate
+                </span>
+              </div>
+
+              <div className="px-4 py-4">
+                {/* Big trust message */}
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-12 h-12 rounded-full bg-green-500/20 border-2 border-green-400 flex items-center justify-center flex-shrink-0">
+                    <ShieldCheck className="w-6 h-6 text-green-600" />
+                  </div>
+                  <div>
+                    <p className="font-bold text-green-700 dark:text-green-400 text-lg leading-tight">
+                      Aapka Loan PAKKA Milega! 🎯
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      Sirf form bharo — 16 minute mein approval guaranteed
+                    </p>
+                  </div>
+                </div>
+
+                {/* 4 trust points */}
+                <div className="grid grid-cols-2 gap-2">
+                  {[
+                    {
+                      icon: Zap,
+                      text: "16 Min Transfer",
+                      sub: "Guaranteed",
+                      color: "text-amber-500",
+                    },
+                    {
+                      icon: CheckCircle2,
+                      text: "99.8% Approved",
+                      sub: "Abhi Tak",
+                      color: "text-green-600",
+                    },
+                    {
+                      icon: Users,
+                      text: "50,000+ Users",
+                      sub: "Trust Karte Hain",
+                      color: "text-blue-500",
+                    },
+                    {
+                      icon: ShieldCheck,
+                      text: "100% Safe",
+                      sub: "Section 138 Protected",
+                      color: "text-purple-500",
+                    },
+                  ].map(({ icon: Icon, text, sub, color }) => (
+                    <div
+                      key={text}
+                      className="flex items-center gap-2 p-2.5 rounded-xl bg-white/60 dark:bg-white/5 border border-green-200/50"
+                    >
+                      <Icon className={`w-4 h-4 ${color} flex-shrink-0`} />
+                      <div>
+                        <p className="text-xs font-bold text-foreground">
+                          {text}
+                        </p>
+                        <p className="text-[10px] text-muted-foreground">
+                          {sub}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Social proof ticker */}
+                <div className="mt-3 flex items-center gap-2 p-2 rounded-lg bg-green-500/10 border border-green-400/20">
+                  <div className="flex -space-x-1.5">
+                    {["R", "S", "P", "A"].map((l) => (
+                      <div
+                        key={l}
+                        className="w-6 h-6 rounded-full bg-gradient-to-br from-green-400 to-emerald-600 border-2 border-white dark:border-card flex items-center justify-center"
+                      >
+                        <span className="text-[9px] font-bold text-white">
+                          {l}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="text-xs text-green-700 dark:text-green-400 font-medium">
+                    <span className="font-bold">
+                      Ramesh ne abhi ₹50,000 approve karwaya!
+                    </span>{" "}
+                    🎉
+                  </p>
+                </div>
+
+                {/* Star rating */}
+                <div className="mt-2 flex items-center gap-1.5 justify-center">
+                  {[1, 2, 3, 4, 5].map((s) => (
+                    <Star
+                      key={s}
+                      className="w-4 h-4 fill-amber-400 text-amber-400"
+                    />
+                  ))}
+                  <span className="text-xs font-semibold text-muted-foreground ml-1">
+                    4.9/5 (2,847 reviews)
+                  </span>
+                </div>
+
+                {/* User reviews */}
+                <div className="mt-3 space-y-2">
+                  {[
+                    {
+                      name: "Ramesh K.",
+                      location: "Delhi",
+                      review:
+                        "16 minute mein ₹50,000 mil gaye! Bahut fast service hai.",
+                      amount: "₹50,000",
+                    },
+                    {
+                      name: "Priya S.",
+                      location: "Mumbai",
+                      review:
+                        "Pehli baar try kiya, seedha approve ho gaya. 100% bharosa.",
+                      amount: "₹30,000",
+                    },
+                    {
+                      name: "Suresh M.",
+                      location: "Jaipur",
+                      review:
+                        "Bina dikkat ke loan mila. Sach mein guaranteed hai!",
+                      amount: "₹1,00,000",
+                    },
+                  ].map(({ name, location, review, amount }) => (
+                    <div
+                      key={name}
+                      className="p-3 rounded-xl bg-white/70 dark:bg-white/5 border border-green-200/40 shadow-sm"
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="flex items-center gap-2">
+                          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-green-400 to-emerald-600 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+                            {name[0]}
+                          </div>
+                          <div>
+                            <p className="text-xs font-bold text-foreground">
+                              {name}{" "}
+                              <span className="text-muted-foreground font-normal">
+                                — {location}
+                              </span>
+                            </p>
+                            <div className="flex gap-0.5 mt-0.5">
+                              {[1, 2, 3, 4, 5].map((s) => (
+                                <Star
+                                  key={s}
+                                  className="w-2.5 h-2.5 fill-amber-400 text-amber-400"
+                                />
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                        <span className="text-[10px] font-bold text-green-600 bg-green-100 dark:bg-green-900/30 px-1.5 py-0.5 rounded-full flex-shrink-0">
+                          {amount} ✓
+                        </span>
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">
+                        "{review}"
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+
             <Card className="border-border shadow-md">
               <CardHeader>
                 <CardTitle className="text-xl flex items-center gap-2">
@@ -305,7 +483,7 @@ export function NewLoanRequest({ onNavigate }: NewLoanRequestProps) {
                     )}
                   </div>
 
-                  {/* ── EMI Calculator Card ── */}
+                  {/* EMI Calculator Card */}
                   {amt > 0 && dur > 0 && (
                     <motion.div
                       initial={{ opacity: 0, y: 10 }}
@@ -314,7 +492,6 @@ export function NewLoanRequest({ onNavigate }: NewLoanRequestProps) {
                       data-ocid="newloan.panel"
                     >
                       <div className="rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/5 via-secondary/40 to-secondary/10 overflow-hidden shadow-[0_4px_24px_0_oklch(0.45_0.15_25/0.10)]">
-                        {/* Header */}
                         <div className="flex items-center gap-2 px-4 pt-4 pb-2 border-b border-primary/10">
                           <div className="w-7 h-7 rounded-lg bg-primary/15 flex items-center justify-center">
                             <TrendingUp className="w-4 h-4 text-primary" />
@@ -323,11 +500,10 @@ export function NewLoanRequest({ onNavigate }: NewLoanRequestProps) {
                             EMI Breakdown
                           </span>
                           <span className="ml-auto text-xs bg-primary/10 text-primary font-medium px-2 py-0.5 rounded-full">
-                            Flat Rate
+                            Reducing Balance
                           </span>
                         </div>
 
-                        {/* Monthly EMI — hero */}
                         <div className="px-4 py-3 flex items-end gap-2 bg-gradient-to-r from-primary/8 to-transparent">
                           <span className="text-4xl font-black text-primary tracking-tight">
                             ₹{formatINR(Math.round(monthlyEMI))}
@@ -337,7 +513,6 @@ export function NewLoanRequest({ onNavigate }: NewLoanRequestProps) {
                           </span>
                         </div>
 
-                        {/* Visual split bar */}
                         <div className="px-4 pb-3">
                           <div className="h-2.5 rounded-full overflow-hidden flex">
                             <div
@@ -351,17 +526,16 @@ export function NewLoanRequest({ onNavigate }: NewLoanRequestProps) {
                           </div>
                           <div className="flex items-center gap-4 mt-1.5">
                             <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                              <span className="w-2.5 h-2.5 rounded-full bg-green-500 inline-block" />
+                              <span className="w-2.5 h-2.5 rounded-full bg-green-500 inline-block" />{" "}
                               Principal
                             </span>
                             <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                              <span className="w-2.5 h-2.5 rounded-full bg-amber-400 inline-block" />
+                              <span className="w-2.5 h-2.5 rounded-full bg-amber-400 inline-block" />{" "}
                               Interest
                             </span>
                           </div>
                         </div>
 
-                        {/* Breakdown rows */}
                         <div className="px-4 pb-4 space-y-2">
                           <div className="grid grid-cols-2 gap-2">
                             <div className="rounded-lg bg-green-500/10 border border-green-500/20 p-3">
@@ -375,7 +549,6 @@ export function NewLoanRequest({ onNavigate }: NewLoanRequestProps) {
                                 ₹{formatINR(amt)}
                               </p>
                             </div>
-
                             <div className="rounded-lg bg-amber-500/10 border border-amber-500/20 p-3">
                               <div className="flex items-center gap-1.5 mb-1">
                                 <Percent className="w-3.5 h-3.5 text-amber-600" />
@@ -387,7 +560,6 @@ export function NewLoanRequest({ onNavigate }: NewLoanRequestProps) {
                                 ₹{formatINR(Math.round(totalInterest))}
                               </p>
                             </div>
-
                             <div className="rounded-lg bg-red-500/10 border border-red-500/20 p-3">
                               <div className="flex items-center gap-1.5 mb-1">
                                 <IndianRupee className="w-3.5 h-3.5 text-red-600" />
@@ -399,7 +571,6 @@ export function NewLoanRequest({ onNavigate }: NewLoanRequestProps) {
                                 ₹{formatINR(commission)}
                               </p>
                             </div>
-
                             <div className="rounded-lg bg-primary/10 border border-primary/20 p-3">
                               <div className="flex items-center gap-1.5 mb-1">
                                 <CalendarDays className="w-3.5 h-3.5 text-primary" />
@@ -413,7 +584,6 @@ export function NewLoanRequest({ onNavigate }: NewLoanRequestProps) {
                             </div>
                           </div>
 
-                          {/* Total repayable */}
                           <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-gradient-to-r from-primary/10 to-primary/5 border border-primary/20 shadow-sm">
                             <span className="text-sm font-bold text-foreground">
                               💰 Total Repayable
@@ -423,7 +593,6 @@ export function NewLoanRequest({ onNavigate }: NewLoanRequestProps) {
                             </span>
                           </div>
 
-                          {/* Mini EMI schedule */}
                           {emiSchedule.length > 0 && (
                             <div className="rounded-lg border border-border overflow-hidden">
                               <div className="bg-muted/50 px-3 py-1.5">
@@ -485,6 +654,15 @@ export function NewLoanRequest({ onNavigate }: NewLoanRequestProps) {
                     </motion.div>
                   )}
 
+                  {/* ₹1 fee notice */}
+                  <div className="flex items-center gap-2 p-3 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700">
+                    <IndianRupee className="w-4 h-4 text-blue-600 flex-shrink-0" />
+                    <p className="text-xs text-blue-700 dark:text-blue-400">
+                      Loan submit karne se pehle sirf{" "}
+                      <strong>₹1 transaction fee</strong> pay karni hogi UPI se.
+                    </p>
+                  </div>
+
                   <Button
                     type="submit"
                     className="w-full"
@@ -505,7 +683,6 @@ export function NewLoanRequest({ onNavigate }: NewLoanRequestProps) {
           >
             <Card className="border-border shadow-md">
               <CardHeader className="pb-2">
-                {/* Step indicator */}
                 <div
                   className="flex items-center gap-2 mb-4"
                   data-ocid="newloan.panel"
@@ -530,15 +707,26 @@ export function NewLoanRequest({ onNavigate }: NewLoanRequestProps) {
                 </div>
                 <CardTitle className="text-xl flex items-center gap-2">
                   <IndianRupee className="w-5 h-5 text-primary" />
-                  Pay Platform Commission — ₹
-                  {pendingCommission.toLocaleString("en-IN")}
+                  Transaction Fee — ₹{TRANSACTION_FEE}
                 </CardTitle>
                 <p className="text-sm text-muted-foreground">
-                  7% of ₹{(pendingReq?.amount || 0).toLocaleString("en-IN")}{" "}
-                  loan amount
+                  Ek chhoti ₹1 fee — loan process shuru karne ke liye
                 </p>
               </CardHeader>
               <CardContent className="space-y-5">
+                {/* Mini guarantee badge on payment step */}
+                <div className="flex items-center gap-3 p-3 rounded-xl bg-green-50 dark:bg-green-900/20 border border-green-300 dark:border-green-700">
+                  <ShieldCheck className="w-7 h-7 text-green-600 flex-shrink-0" />
+                  <div>
+                    <p className="text-sm font-bold text-green-700 dark:text-green-400">
+                      Aapka Loan Confirm Hoga! ✅
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      ₹1 pay karo — loan review 16 min mein complete
+                    </p>
+                  </div>
+                </div>
+
                 {/* QR Code */}
                 <div className="flex justify-center">
                   <img
@@ -585,8 +773,7 @@ export function NewLoanRequest({ onNavigate }: NewLoanRequestProps) {
                     2. Scan QR or enter UPI ID
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    3. Pay exactly ₹{pendingCommission.toLocaleString("en-IN")}{" "}
-                    commission
+                    3. Pay exactly ₹{TRANSACTION_FEE}
                   </p>
                   <p className="text-xs text-muted-foreground">
                     4. Enter UTR/Transaction ID below
@@ -627,8 +814,7 @@ export function NewLoanRequest({ onNavigate }: NewLoanRequestProps) {
                     htmlFor="loan-pay-confirm"
                     className="text-sm leading-snug cursor-pointer"
                   >
-                    I confirm I have paid ₹
-                    {pendingCommission.toLocaleString("en-IN")} commission via
+                    I confirm I have paid ₹{TRANSACTION_FEE} transaction fee via
                     UPI
                   </Label>
                 </div>

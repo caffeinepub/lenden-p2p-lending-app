@@ -5,6 +5,7 @@ import {
   ChevronDown,
   ChevronUp,
   Clock,
+  Download,
   HeadphonesIcon,
   IndianRupee,
   MessageCircle,
@@ -116,6 +117,35 @@ export function SupportPage({ onNavigate }: SupportPageProps) {
                   </a>
                 </Button>
               </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        {/* Promo Download Card */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15 }}
+        >
+          <Card className="border-2 border-purple-300 bg-gradient-to-r from-orange-50 to-green-50 shadow-lg">
+            <CardContent className="p-5 text-center">
+              <Badge className="bg-purple-600 text-white mb-3">
+                📢 Promo Materials
+              </Badge>
+              <p className="text-sm font-semibold text-gray-700 mb-1">
+                App ke promotional images download karein
+              </p>
+              <p className="text-xs text-gray-500 mb-4">
+                Facebook, WhatsApp, Instagram ke liye ready-made posts — ek
+                click mein download!
+              </p>
+              <Button
+                className="bg-gradient-to-r from-orange-500 to-green-600 hover:from-orange-600 hover:to-green-700 text-white font-bold w-full sm:w-auto"
+                onClick={() => onNavigate("promo")}
+                data-ocid="support.promo.primary_button"
+              >
+                <Download className="w-4 h-4 mr-2" />📢 Promo Download
+              </Button>
             </CardContent>
           </Card>
         </motion.div>

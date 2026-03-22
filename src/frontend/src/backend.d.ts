@@ -7,6 +7,13 @@ export interface None {
     __kind__: "None";
 }
 export type Option<T> = Some<T> | None;
+export enum UserRole {
+    admin = "admin",
+    user = "user",
+    guest = "guest"
+}
 export interface backendInterface {
-    _initializeAccessControlWithSecret: (token: string) => Promise<void>;
+    assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
+    getCallerUserRole(): Promise<UserRole>;
+    isCallerAdmin(): Promise<boolean>;
 }

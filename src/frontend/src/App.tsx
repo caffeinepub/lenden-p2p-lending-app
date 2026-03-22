@@ -19,6 +19,7 @@ import { MakeRepayment } from "./pages/MakeRepayment";
 import { MembershipPage } from "./pages/MembershipPage";
 import { NewLoanRequest } from "./pages/NewLoanRequest";
 import { PromissoryNote } from "./pages/PromissoryNote";
+import { PromoPage } from "./pages/PromoPage";
 import { ReferralPage } from "./pages/ReferralPage";
 import { SupportPage } from "./pages/SupportPage";
 import { TutorialPage } from "./pages/TutorialPage";
@@ -41,6 +42,7 @@ function AppContent() {
     if (page === "support") return <SupportPage onNavigate={navigate} />;
     if (page === "advertise") return <AdvertisePage onNavigate={navigate} />;
     if (page === "tutorial") return <TutorialPage onNavigate={navigate} />;
+    if (page === "promo") return <PromoPage onNavigate={navigate} />;
 
     if (!currentUser && page !== "landing" && page !== "auth") {
       return <LandingPage onNavigate={navigate} />;
